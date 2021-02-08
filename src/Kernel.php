@@ -14,6 +14,13 @@ class Kernel extends BaseKernel
 {
     use MicroKernelTrait;
 
+    public static function get(): self
+    {
+        global $kernel;
+
+        return $kernel;
+    }
+
     protected function configureContainer(ContainerConfigurator $container): void
     {
         $container->import('../config/{packages}/*.yaml');
