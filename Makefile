@@ -6,7 +6,7 @@ nginx_logs:
 	tail -f ${nginx_log}
 
 up:
-	rm ${nginx_log}
+	rm -f ${nginx_log}
 	brew services restart nginx
 	brew services restart php
 	nginx_logs
@@ -17,3 +17,6 @@ down:
 
 config_nginx:
 	~/subl /usr/local/etc/nginx/nginx.conf
+
+kafema:
+	php bin/console app:parse kafema
