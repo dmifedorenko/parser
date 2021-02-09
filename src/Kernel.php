@@ -112,3 +112,21 @@ class Kernel extends BaseKernel
         exit;
     }
 }
+
+function pr()
+{
+    $p = func_get_args();
+
+    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
+        var_dump($p);
+        exit;
+    }
+
+    call_user_func_array([Kernel::class, 'pr'], $p);
+}
+
+function p0()
+{
+    $p = func_get_args();
+    call_user_func_array([Kernel::class, 'p0'], $p);
+}
