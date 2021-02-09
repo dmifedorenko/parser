@@ -23,6 +23,12 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
+    App\Service\YandexDisk:
+        public: true
+        arguments:
+            $token: 'AgAAAAAApk5mAAbdFqDWs4y5PE53tI8rckQocp0'
+            $nameSpace: 'parser'
+
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
