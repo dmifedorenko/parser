@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Command;
 
-use App\Service\Kafema;
+use App\Kernel;
+use App\Service\Site\Kafema;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,16 +30,10 @@ class ParseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($input->getArgument('site') === 'kafema') {
+        $site = $input->getArgument('site');
+        $parser = Kernel::get()->getContainer()->get('App\Service\Site\\' . ucfirst($site));
 
-            $this->kafema->parse($output);
-
-
-            return Command::SUCCESS;
-        }
-
-        $output->writeLn('Ivalid site name ' . $input->getArgument('site'));
-
-        return Command::FAILURE;
+        $parser->parse($output);
+        return Command::SUCCESS;
     }
 }

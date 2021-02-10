@@ -23,6 +23,10 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
+    App\Service\Site\:
+        resource: '../src/Service/Site/*'
+        public: true
+
     App\Service\YandexDisk:
         public: true
         arguments:

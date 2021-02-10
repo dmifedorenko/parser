@@ -2,11 +2,11 @@
 namespace App\Service;
 
 use App\Kernel;
+use DOMDocument;
 use DOMNodeList;
 use DOMXPath;
-use Symfony\Component\CssSelector\CssSelectorConverter;
-use DOMDocument;
 use InvalidArgumentException;
+use Symfony\Component\CssSelector\CssSelectorConverter;
 
 class Parser
 {
@@ -137,6 +137,8 @@ class Parser
 
     public function getUrl(string $url, string $method = 'GET', array $content = []): string
     {
+        $url = trim($url);
+
         if ($this->rootUrl && stripos($url, $this->rootUrl) !== 0) {
             $url = $this->rootUrl . $url;
         }
@@ -166,7 +168,7 @@ class Parser
 
         $all = file_get_contents($file);
         if ($all == '404') {
-            throw new InvalidArgumentException('404 - ' . $url);
+            throw new InvalidArgumentException('404 - ' . $url . PHP_EOL . $file);
         }
 
         $this->lastPage = $all;

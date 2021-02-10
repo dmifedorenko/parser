@@ -82,12 +82,13 @@ class YandexDisk
 
 
         $response = $this->request('GET', 'resources/upload', ['path' => $appPath . '/test.txt', 'overwrite' => true]);
-
+        /*
         $this->request('PUT', 'resources/upload', [
             'path' => $appPath . '/test.txt',
             'url'
             'overwrite' => true,
         ]);
+        */
 
         print_r($response);
         exit;

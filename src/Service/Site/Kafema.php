@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Site;
 
 use App\Kernel;
+use App\Service\Parser;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Kafema
+class Kafema implements SiteParserInterface
 {
     public Parser $parser;
 
@@ -17,6 +18,9 @@ class Kafema
 
     public function parse(OutputInterface $output): void
     {
+        //$yandexDisk = Kernel::get()->getContainer()->get(YandexDisk::class);
+        //$yandexDisk->setAppName($site)->connect();
+
         foreach ($this->getCollections() as $collection) {
             $urls = $this->getGoodsUrls($collection);
 
