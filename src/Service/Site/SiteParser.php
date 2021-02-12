@@ -27,7 +27,6 @@ abstract class SiteParser implements SiteParserInterface
         $this->output = $output;
         $this->parser->setOutput($output);
 
-
 //        $this->parser = new Parser($site, $output);
 //        $this->parser->rootUrl = $this->rootUrl;
     }

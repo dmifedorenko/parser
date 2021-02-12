@@ -70,8 +70,8 @@ class Kafema extends SiteParser
                 if (stripos($src, '/upload/') === 0) {
                     $src = $this->parser->rootUrl . $src;
                 } else {
-                    list(, $data) = explode(';', $src);
-                    list(, $data) = explode(',', $data);
+                    [, $data] = explode(';', $src);
+                    [, $data] = explode(',', $data);
                     $content = base64_decode($data);
                     $src = $this->yandexDisk->upload(md5($src), $content);
                 }

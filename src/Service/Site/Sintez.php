@@ -8,7 +8,6 @@ use function App\pr;
 
 class Sintez extends SiteParser
 {
-
     private string $onlyCategories = 'https://sintezf.com/shop/catalog/miski-tarelki-tazy/152
         https://sintezf.com/shop/catalog/konditerskiy-inventar/4
         https://sintezf.com/shop/catalog/kastryuli-kotly/116
@@ -97,14 +96,12 @@ class Sintez extends SiteParser
                     continue;
                 }
 
-
                 try {
                     $price = preg_replace('~\s+~u', '', trim($items[0]['span']['b'], '₽'));
 
                     if ($price == '1') {
                         pr($price, $items);
                     }
-
                 } catch (\Throwable) {
                     p0('No price ' . $goodUrl);
                 }
@@ -145,7 +142,6 @@ class Sintez extends SiteParser
                 p0($goodUrl, $e);
                 continue;
             }
-
         }
     }
 
@@ -161,12 +157,13 @@ class Sintez extends SiteParser
         return $uniqGoods;
     }
 
-    private function proccessPage(string $url, array &$ret)
+    private function proccessPage(string $url, array &$ret): void
     {
         $this->parser->getUrl($url);
         $title = trim(str_replace(PHP_EOL, ' ', $this->parser->css('title')));
         if (stripos($title, 'Каталог') === 0) {
             $this->output->writeln('<error>Skip catalog url - ' . trim($url) . '</error>');
+
             return;
         }
 

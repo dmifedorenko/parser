@@ -38,7 +38,6 @@ class Almaz extends SiteParser
                         if ($li['div'][0]['span']['_'] === 'Доступно:') {
                             $count = $li['div'][1]['span']['_'];
                         }
-
                     }
 
                     $price = $this->getParser()->css('.update_price');
@@ -93,5 +92,4 @@ class Almaz extends SiteParser
 
         return $sections;
     }
-
 }

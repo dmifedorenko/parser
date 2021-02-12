@@ -24,24 +24,24 @@ class Kernel extends BaseKernel
     protected function configureContainer(ContainerConfigurator $container): void
     {
         $container->import('../config/{packages}/*.yaml');
-        $container->import('../config/{packages}/'.$this->environment.'/*.yaml');
+        $container->import('../config/{packages}/' . $this->environment . '/*.yaml');
 
-        if (is_file(\dirname(__DIR__).'/config/services.yaml')) {
+        if (is_file(\dirname(__DIR__) . '/config/services.yaml')) {
             $container->import('../config/services.yaml');
-            $container->import('../config/{services}_'.$this->environment.'.yaml');
-        } elseif (is_file($path = \dirname(__DIR__).'/config/services.php')) {
+            $container->import('../config/{services}_' . $this->environment . '.yaml');
+        } elseif (is_file($path = \dirname(__DIR__) . '/config/services.php')) {
             (require $path)($container->withPath($path), $this);
         }
     }
 
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
-        $routes->import('../config/{routes}/'.$this->environment.'/*.yaml');
+        $routes->import('../config/{routes}/' . $this->environment . '/*.yaml');
         $routes->import('../config/{routes}/*.yaml');
 
-        if (is_file(\dirname(__DIR__).'/config/routes.yaml')) {
+        if (is_file(\dirname(__DIR__) . '/config/routes.yaml')) {
             $routes->import('../config/routes.yaml');
-        } elseif (is_file($path = \dirname(__DIR__).'/config/routes.php')) {
+        } elseif (is_file($path = \dirname(__DIR__) . '/config/routes.php')) {
             (require $path)($routes->withPath($path), $this);
         }
     }
@@ -113,7 +113,7 @@ class Kernel extends BaseKernel
     }
 }
 
-function pr()
+function pr(): void
 {
     $p = func_get_args();
 
@@ -125,7 +125,7 @@ function pr()
     call_user_func_array([Kernel::class, 'pr'], $p);
 }
 
-function p0()
+function p0(): void
 {
     $p = func_get_args();
     call_user_func_array([Kernel::class, 'p0'], $p);

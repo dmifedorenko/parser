@@ -27,7 +27,7 @@ class ParseCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addArgument('site', InputArgument::REQUIRED, 'The site to parse');
     }

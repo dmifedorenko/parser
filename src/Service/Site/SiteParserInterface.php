@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Site;
-
 
 use Symfony\Component\Console\Output\OutputInterface;
 

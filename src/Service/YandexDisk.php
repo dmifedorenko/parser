@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Service;
 
 /*
@@ -51,13 +50,14 @@ class YandexDisk
                 'headers' => [
                     'Authorization: OAuth ' . $this->token,
                 ],
-                'query' => $query
+                'query' => $query,
             ], $extraOptions)
         )->toArray();
 
         if (!empty($response['error'])) {
             throw new BadRequestException($method . ' ' . $url . ' ' . print_r($response['error'], true));
         }
+
         return $response;
     }
 
@@ -104,7 +104,7 @@ class YandexDisk
         ];
         $finfo = finfo_open(FILEINFO_MIME);
         $mime = finfo_file($finfo, $file);
-        $parts = explode(";", $mime);
+        $parts = explode(';', $mime);
 
         $headers['Content-Type'] = $parts[0];
         $headers['Etag'] = md5_file($file);
@@ -149,7 +149,7 @@ class YandexDisk
 
             $response = $this->request('GET', 'resources/download', [
                 'public_key' => $response['public_key'],
-                'path' => $response['path']
+                'path' => $response['path'],
             ]);
 
             echo 'Yandex file upload - ' . $response['href'] . PHP_EOL;

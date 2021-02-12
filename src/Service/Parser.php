@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Service;
 
 use App\Kernel;
@@ -57,7 +58,7 @@ class Parser
     private function getHeaders(): array
     {
         $images = [];
-        for ($i = 1; $i <= 30; $i++) {
+        for ($i = 1; $i <= 30; ++$i) {
             if ($i == 1) {
                 $images[] = 'Картинка';
             } else {
@@ -65,7 +66,7 @@ class Parser
             }
         }
 
-        return explode(',', 'Коллекция,Артикул,Название,Подробнее,Цена,РРЦ,Размеры,Источник товара,Категория,' . join(',', $images));
+        return explode(',', 'Коллекция,Артикул,Название,Подробнее,Цена,РРЦ,Размеры,Источник товара,Категория,' . implode(',', $images));
     }
 
     public function addHeader(string $header): void
@@ -90,7 +91,8 @@ class Parser
         string $source,
         string $category,
         array $images = []
-    ) {
+    ): void
+    {
         foreach ($images as &$image) {
             if ($this->rootUrl && $image[0] == '/') {
                 $image = $this->rootUrl . $image;
@@ -107,17 +109,17 @@ class Parser
             $rawContent = $content['rawContent'] ?? null;
             unset($content['rawContent']);
 
-            $context = array(
-                'ssl' => array(
+            $context = [
+                'ssl' => [
                     'verify_peer' => false,
                     'verify_peer_name' => false,
-                ),
-                'http' => array(
+                ],
+                'http' => [
                     'method' => $method,
-                    'header' => join("\r\n", $this->headers),
+                    'header' => implode("\r\n", $this->headers),
                     'content' => $rawContent ? $rawContent : ($content ? http_build_query($content) : null),
-                )
-            );
+                ],
+            ];
         }
 
         return $context;
@@ -183,15 +185,15 @@ class Parser
 
     public function check(): void
     {
-        $fh = fopen($this->outPutFile, 'r');
+        $fh = fopen($this->outPutFile, 'rb');
         $c = 0;
         while ($data = fgetcsv($fh)) {
-          $c++;
-          if ($c > 50) {
-              break;
-          }
+            ++$c;
+            if ($c > 50) {
+                break;
+            }
 
-          Kernel::p0($data);
+            Kernel::p0($data);
         }
 
         fclose($fh);
@@ -200,14 +202,13 @@ class Parser
     private function getDom(): DOMDocument
     {
         libxml_use_internal_errors(true);
-        $dom = new DomDocument;
+        $dom = new DomDocument();
         $dom->loadHTML($this->lastPage);
 
         return $dom;
     }
 
     /**
-     * @param string $xpath
      * @return DOMNodeList|false
      */
     public function getXpath(string $xpath)
@@ -219,6 +220,7 @@ class Parser
         }
 
         $domXPath = $cache[$key];
+
         return $domXPath->query($xpath);
     }
 
@@ -275,7 +277,6 @@ class Parser
             /**
              * @var \DOMElement $node
              */
-
             $t = $node->ownerDocument->saveHTML($node);
             $t = preg_replace('~<br[^>]*>~i', PHP_EOL, $t);
 
@@ -283,17 +284,17 @@ class Parser
             $items = array_map('trim', $items);
             //$items = array_filter($items);
 
-            $text[] = join(PHP_EOL, $items);
+            $text[] = implode(PHP_EOL, $items);
         }
 
-        return trim(join(PHP_EOL, $text));
+        return trim(implode(PHP_EOL, $text));
     }
 
     private $xmlToArrayItem;
 
     public function xml_to_array()
     {
-        $result = array();
+        $result = [];
 
         if ($this->xmlToArrayItem->hasAttributes()) {
             $attrs = $this->xmlToArrayItem->attributes;
@@ -308,12 +309,13 @@ class Parser
                 $child = $children->item(0);
                 if ($child->nodeType == XML_TEXT_NODE) {
                     $result['_'] = $child->nodeValue;
+
                     return count($result) == 1
                         ? $result['_']
                         : $result;
                 }
             }
-            $groups = array();
+            $groups = [];
             foreach ($children as $child) {
                 if (!isset($result[$child->nodeName])) {
                     $this->xmlToArrayItem = $child;
@@ -325,7 +327,7 @@ class Parser
                     }
                 } else {
                     if (!isset($groups[$child->nodeName])) {
-                        $result[$child->nodeName] = array($result[$child->nodeName]);
+                        $result[$child->nodeName] = [$result[$child->nodeName]];
                         $groups[$child->nodeName] = 1;
                     }
                     $this->xmlToArrayItem = $child;
