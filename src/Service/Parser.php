@@ -91,8 +91,7 @@ class Parser
         string $source,
         string $category,
         array $images = []
-    ): void
-    {
+    ): void {
         foreach ($images as &$image) {
             if ($this->rootUrl && $image[0] == '/') {
                 $image = $this->rootUrl . $image;

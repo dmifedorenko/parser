@@ -23,5 +23,5 @@ kafema:
 
 phpstan:
 	vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -vvv --allow-risky=yes src
-	#vendor/bin/phpcs --standard=phpcs.xml -p -q --warning-severity=0 --report-width=9000 "src"
-	#vendor/bin/phpstan analyse --no-progress --no-ansi  --memory-limit=-1 "src"
+	vendor/bin/phpcs -p -q --warning-severity=0 --report-width=9000 "src"
+	vendor/bin/phpstan analyse --no-progress --no-ansi  --memory-limit=-1 "src"

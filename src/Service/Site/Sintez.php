@@ -2,9 +2,9 @@
 
 namespace App\Service\Site;
 
-use Symfony\Component\Console\Output\OutputInterface;
 use function App\p0;
 use function App\pr;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Sintez extends SiteParser
 {
