@@ -2,17 +2,15 @@
 
 namespace App\Service\Site;
 
-use App\Service\Parser;
 use Symfony\Component\Console\Output\OutputInterface;
 use function App\p0;
 use function App\pr;
 
-class Sintez implements SiteParserInterface
+class Sintez extends SiteParser
 {
-    public Parser $parser;
-    private OutputInterface $output;
 
-    private string $onlyCategories = 'https://sintezf.com/shop/catalog/konditerskiy-inventar/4
+    private string $onlyCategories = 'https://sintezf.com/shop/catalog/miski-tarelki-tazy/152
+        https://sintezf.com/shop/catalog/konditerskiy-inventar/4
         https://sintezf.com/shop/catalog/kastryuli-kotly/116
         https://sintezf.com/shop/catalog/bokaly-dlya-kofe/515
         https://sintezf.com/shop/catalog/farfor-black-star-p-l/778
@@ -65,25 +63,17 @@ class Sintez implements SiteParserInterface
         https://sintezf.com/shop/catalog/smesi-dlya-morozhenogo-i-kokteyley/700
         https://sintezf.com/shop/catalog/toppingi-i-napitki/57';
 
-    public function __construct()
-    {
-        $this->parser = new Parser('sintez', __DIR__);
-        $this->parser->rootUrl = 'https://sintezf.com';
-    }
-
     public function parse(OutputInterface $output): void
     {
-        $this->output = $output;
+        parent::parse($output);
+
         $output->writeln('Make good links');
-        $uniqGoods = $this->getUniqGoodsUrl();
-        $output->writeln(PHP_EOL . PHP_EOL);
+        $uniqGoods = array_keys($this->getUniqGoodsUrl());
+        shuffle($uniqGoods);
 
+        $this->output->writeln('<comment>Uniq goods - ' . count($uniqGoods) . '</comment>');
 
-        $output->writeln('Goods - ' . count($uniqGoods));
-        return;
-
-
-        foreach ($uniqGoods as $goodUrl => $nul) {
+        foreach ($uniqGoods as $goodUrl) {
             try {
                 $this->parser->getUrl($goodUrl);
 
@@ -103,7 +93,7 @@ class Sintez implements SiteParserInterface
                 }
 
                 if ($skipGood) {
-                    //p0($goodUrl);
+                    $this->output->writeln('Skip ' . $goodUrl);
                     continue;
                 }
 
@@ -115,7 +105,7 @@ class Sintez implements SiteParserInterface
                         pr($price, $items);
                     }
 
-                } catch (\Throwable $e) {
+                } catch (\Throwable) {
                     p0('No price ' . $goodUrl);
                 }
                 unset($items[0]);
@@ -173,8 +163,16 @@ class Sintez implements SiteParserInterface
 
     private function proccessPage(string $url, array &$ret)
     {
-        $this->output->write('.');
         $this->parser->getUrl($url);
+        $title = trim(str_replace(PHP_EOL, ' ', $this->parser->css('title')));
+        if (stripos($title, 'Каталог') === 0) {
+            $this->output->writeln('<error>Skip catalog url - ' . trim($url) . '</error>');
+            return;
+        }
+
+        if ($this->parser->css('select#availability')) {
+            $this->parser->getUrl($url . '?availability=a_in_stock');
+        }
 
         $categories = $this->parser->css('.category-cell a');
 
@@ -183,10 +181,10 @@ class Sintez implements SiteParserInterface
         }
 
         foreach ($this->parser->css('#product-table tr.mosaic-view-mode h4 a', true) as $goodLink) {
-            $uniqGoods[$goodLink['@']['href']] = 1;
+            $ret[$goodLink['@']['href']] = 1;
         }
 
-        if (stripos($url, '?page=') === false) {
+        if (stripos($url, '?page=') === false && stripos($url, '&page=') === false) {
             $pages = $this->parser->css('ul.pagination li a');
             foreach ($pages ?? [] as $pageUrl) {
                 if ($pageUrl['@']['href'] != $url) {

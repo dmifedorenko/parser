@@ -3,23 +3,19 @@
 namespace App\Service\Site;
 
 use App\Kernel;
-use App\Service\Parser;
+use App\Service\YandexDisk;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Kafema implements SiteParserInterface
+class Kafema extends SiteParser
 {
-    public Parser $parser;
-
-    public function __construct()
-    {
-        $this->parser = new Parser('kafema', __DIR__);
-        $this->parser->rootUrl = 'https://kafema.ru';
-    }
+    private YandexDisk $yandexDisk;
 
     public function parse(OutputInterface $output): void
     {
-        //$yandexDisk = Kernel::get()->getContainer()->get(YandexDisk::class);
-        //$yandexDisk->setAppName($site)->connect();
+        parent::parse($output);
+
+        $this->yandexDisk = Kernel::get()->getContainer()->get(YandexDisk::class);
+        $this->yandexDisk->setAppName($this->parser->getName());
 
         foreach ($this->getCollections() as $collection) {
             $urls = $this->getGoodsUrls($collection);
@@ -74,8 +70,10 @@ class Kafema implements SiteParserInterface
                 if (stripos($src, '/upload/') === 0) {
                     $src = $this->parser->rootUrl . $src;
                 } else {
-                    echo 1;
-                    continue;
+                    list(, $data) = explode(';', $src);
+                    list(, $data) = explode(',', $data);
+                    $content = base64_decode($data);
+                    $src = $this->yandexDisk->upload(md5($src), $content);
                 }
                 $images[] = $src;
             } catch (\Throwable $e) {

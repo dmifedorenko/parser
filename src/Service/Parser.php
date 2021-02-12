@@ -6,12 +6,15 @@ use DOMDocument;
 use DOMNodeList;
 use DOMXPath;
 use InvalidArgumentException;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\CssSelector\CssSelectorConverter;
 
 class Parser
 {
-    private $fHandler;
-    private $fHandler2;
+    /**
+     * @var false|resource
+     */
+    private $fHandle;
 
     private string $defHeaders = 'accept: application/json, text/plain, */*
         accept-language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,ca;q=0.6,ny;q=0.5,hu;q=0.4,es;q=0.3
@@ -20,7 +23,7 @@ class Parser
     public string $lastPage = '';
     private array $headers = [];
     public int $index = -1;
-    public bool $cacheTTL = true;
+    public int $cacheTTLDays = 5;
 
     private string $outPutFile;
 
@@ -28,35 +31,27 @@ class Parser
     private string $name;
 
     private CssSelectorConverter $converter;
+    private OutputInterface $output;
 
-    public function __construct(string $name, $dir = __DIR__, $outName = null, $appendOut = false)
+    public function __construct(string $name)
     {
         $this->name = $name;
-        if (file_exists($name)) {
-            $in = $name;
-        } else {
-            $in = $dir . '/' . $name . '.csv';
-        }
+        $outName = $this->name . '_out.csv';
+        $this->outPutFile = Kernel::get()->getProjectDir() . '/' . Kernel::get()->getContainer()->getParameter('parser')['output'] . '/' . $outName;
 
-        if (file_exists($in)) {
-            $this->fHandler = fopen($in, 'rb');
-        }
-
-        $outName = $outName ?: $name . '_out.csv';
-        $this->outPutFile = Kernel::get()->getProjectDir() . '/' . Kernel::get()->getContainer()->getParameter('parser.output') . '/' . $outName;
-
-        if ($appendOut && file_exists($this->outPutFile)) {
-            $this->fHandler2 = fopen($this->outPutFile, 'ab');
-        } else {
-            $this->fHandler2 = fopen($this->outPutFile, 'wb');
-            fputcsv($this->fHandler2, $this->getHeaders());
-        }
+        $this->fHandle = fopen($this->outPutFile, 'wb');
+        fputcsv($this->fHandle, $this->getHeaders());
 
         foreach (explode(PHP_EOL, $this->defHeaders) as $header) {
             $this->addHeader(trim($header));
         }
 
         $this->converter = new CssSelectorConverter();
+    }
+
+    public function setOutput(OutputInterface $output): void
+    {
+        $this->output = $output;
     }
 
     private function getHeaders(): array
@@ -78,17 +73,10 @@ class Parser
         $this->headers[] = trim($header);
     }
 
-    public function getRow()
-    {
-        $this->index++;
-        return fgetcsv($this->fHandler, 0, ';');
-    }
-
     // Коллекция,Артикул,Название,Подробнее,Цена,РРЦ,Размеры,Источник товара,Категория
     public function putRow(array $data): void
     {
-        //p0($data);
-        fputcsv($this->fHandler2, $data);
+        fputcsv($this->fHandle, $data);
     }
 
     public function putRowDetails(
@@ -150,18 +138,18 @@ class Parser
             $id .= '_' . md5(serialize($context));
         }
 
-        $tmpDir = Kernel::get()->getContainer()->getParameter('parser.tmp');
+        $tmpDir = Kernel::get()->getContainer()->getParameter('parser')['tmp'];
         if (!file_exists($tmpDir)) {
             mkdir($tmpDir);
         }
         $file = $tmpDir . '/' . $this->name . '_' . $id;
 
-        if (!file_exists($file) || ($this->cacheTTL && time() - filemtime($file)) / 60 / 60 / 24 > 1) {
-            //return '';
+        if (!file_exists($file) || ($this->cacheTTLDays && (time() - filemtime($file)) / 60 / 60 / 24 > $this->cacheTTLDays)) {
             try {
-                file_put_contents($file, file_get_contents($url, false, $context ? stream_context_create($context) : null));
+                $this->output->writeln('Downloading ' . $url);
+                file_put_contents($file, file_get_contents($url, false, $context ? stream_context_create($context) : null), LOCK_EX);
             } catch (\ErrorException) {
-                file_put_contents($file, '404');
+                file_put_contents($file, '404', LOCK_EX);
                 throw new InvalidArgumentException('404 - ' . $url);
             }
         }
@@ -181,13 +169,15 @@ class Parser
         $this->lastPage = $content;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     public function done(): void
     {
-        if ($this->fHandler) {
-            fclose($this->fHandler);
-        }
-        if ($this->fHandler2) {
-            fclose($this->fHandler2);
+        if ($this->fHandle) {
+            fclose($this->fHandle);
         }
     }
 

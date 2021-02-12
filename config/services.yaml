@@ -4,8 +4,19 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    parser.tmp: '/tmp/parser'
-    parser.output: 'var/output'
+    parser:
+        tmp: '/tmp/parser'
+        output: 'var/output'
+
+        sitesConfig:
+            sintez:
+                cacheTTLDays: 1
+                rootUrl: 'https://sintezf.com'
+            kafema:
+                cacheTTLDays: 3
+                rootUrl: 'https://kafema.ru'
+            almaz:
+                rootUrl: 'https://almaz-diy.ru'
 
 services:
     # default configuration for services in *this* file
@@ -32,6 +43,7 @@ services:
         arguments:
             $token: 'AgAAAAAApk5mAAbdFqDWs4y5PE53tI8rckQocp0'
             $nameSpace: 'parser'
+            $cacheDir: '%kernel.cache_dir%'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class

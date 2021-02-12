@@ -4,6 +4,8 @@ namespace App\Command;
 
 use App\Kernel;
 use App\Service\Site\Kafema;
+use App\Service\Site\SiteParser;
+use App\Service\YandexDisk;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,10 +17,12 @@ class ParseCommand extends Command
     protected static $defaultName = 'app:parse';
 
     private Kafema $kafema;
+    private Kernel $app;
 
-    public function __construct(Kafema $kafema)
+    public function __construct(Kafema $kafema, Kernel $app)
     {
         $this->kafema = $kafema;
+        $this->app = $app;
 
         parent::__construct();
     }
@@ -30,10 +34,28 @@ class ParseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $site = $input->getArgument('site');
-        $parser = Kernel::get()->getContainer()->get('App\Service\Site\\' . ucfirst($site));
+        $siteName = $input->getArgument('site');
 
-        $parser->parse($output);
+        if ($siteName == 'yandex-disk-test') {
+            $yandexDisk = $this->app->getContainer()->get(YandexDisk::class);
+            $yandexDisk->setAppName($siteName);
+            $yandexDisk->upload('your.txt', '123456');
+        } else {
+            /**
+             * @var SiteParser $site
+             */
+            $site = $this->app->getContainer()->get('App\Service\Site\\' . ucfirst($siteName));
+
+            $parserConfig = $this->app->getContainer()->getParameter('parser')['sitesConfig'][$siteName] ?? [];
+
+            foreach ($parserConfig as $name => $value) {
+                $site->getParser()->{$name} = $value;
+            }
+
+            $site->parse($output);
+            $site->getParser()->done();
+        }
+
         return Command::SUCCESS;
     }
 }
