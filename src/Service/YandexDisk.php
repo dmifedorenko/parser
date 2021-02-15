@@ -45,7 +45,9 @@ class YandexDisk
     {
         $url = stripos($url, '://') === false ? 'https://cloud-api.yandex.net/v1/disk/' . $url : $url;
 
-        $response = $this->client->request($method, $url,
+        $response = $this->client->request(
+            $method,
+            $url,
             array_merge_recursive([
                 'headers' => [
                     'Authorization: OAuth ' . $this->token,

@@ -2,8 +2,6 @@
 
 namespace App\Service\Site;
 
-use function App\p0;
-use function App\pr;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Sintez extends SiteParser
@@ -100,15 +98,15 @@ class Sintez extends SiteParser
                     $price = preg_replace('~\s+~u', '', trim($items[0]['span']['b'], '₽'));
 
                     if ($price == '1') {
-                        pr($price, $items);
+                        dd($price, $items);
                     }
                 } catch (\Throwable) {
-                    p0('No price ' . $goodUrl);
+                    dump('No price ' . $goodUrl);
                 }
                 unset($items[0]);
 
                 if ($items[1]['strong'] != 'Код:') {
-                    pr($title, $items[1]['strong']);
+                    dd($title, $items[1]['strong']);
                 }
 
                 $art = $items[1]['span'];
@@ -139,7 +137,7 @@ class Sintez extends SiteParser
                     $images
                 );
             } catch (\Throwable $e) {
-                p0($goodUrl, $e);
+                dump($goodUrl, $e);
                 continue;
             }
         }

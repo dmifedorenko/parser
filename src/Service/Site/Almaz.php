@@ -3,7 +3,6 @@
 namespace App\Service\Site;
 
 use Symfony\Component\Console\Output\OutputInterface;
-use function App\pr;
 
 class Almaz extends SiteParser
 {
@@ -79,7 +78,7 @@ class Almaz extends SiteParser
                         $images
                     );
                 } catch (\Throwable $e) {
-                    pr($section, $link, $e, $item);
+                    dd($section, $link, $e, $item);
                 }
             }
             $this->output->writeln('');

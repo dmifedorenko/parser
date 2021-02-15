@@ -102,7 +102,7 @@ class Kafema extends SiteParser
             }
 
             if (!$data['offers']) {
-                Kernel::p0('No offers', $data);
+                dump('No offers', $data);
             }
 
             foreach ($data['offers'] as $offer) {
@@ -122,7 +122,7 @@ class Kafema extends SiteParser
                                 $oSize = $offer['sort']['P_WEIGHT'] ?? $offer['sort']['P_COLOR'];
                             }
                         } catch (\Throwable $e) {
-                            Kernel::p0('No size ' . $url, $e->getMessage(), $data);
+                            dump('No size ' . $url, $e->getMessage(), $data);
                         }
                         $name .= '. ' . $oSize . 'г';
                         $size = 'для кофемашины,для гейзерной кофеварки,для турки,для фильтра,для френч-пресса,для чашки,для эспрессо';
@@ -142,15 +142,15 @@ class Kafema extends SiteParser
                     ];
 
                     if (!$images) {
-                        Kernel::p0('No images', $url, $images, $offer);
+                        dump('No images', $url, $images, $offer);
                     }
                 }
             }
         } catch (\Throwable $e) {
-            Kernel::p0($url, $e->getMessage(), $data);
+            dump($url, $e->getMessage(), $data);
         }
 
-        //pr($url, $ret, $data);
+        //dd($url, $ret, $data);
         return $ret;
     }
 

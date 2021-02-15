@@ -193,7 +193,7 @@ class Parser
                 break;
             }
 
-            Kernel::p0($data);
+            dump($data);
         }
 
         fclose($fh);
@@ -243,7 +243,7 @@ class Parser
         try {
             $data = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
         } catch (\Throwable $e) {
-            Kernel::p0('Json', $data);
+            dump('Json', $data);
             throw $e;
         }
 
@@ -259,7 +259,7 @@ class Parser
         $ret = [];
         foreach ($nodes as $node) {
             $this->xmlToArrayItem = $node;
-            $ret[] = $this->xml_to_array();
+            $ret[] = $this->xmlToArray();
         }
 
         if (!$allwaysArray && count($ret) == 1) {
@@ -292,7 +292,7 @@ class Parser
 
     private $xmlToArrayItem;
 
-    public function xml_to_array()
+    public function xmlToArray()
     {
         $result = [];
 
@@ -319,7 +319,7 @@ class Parser
             foreach ($children as $child) {
                 if (!isset($result[$child->nodeName])) {
                     $this->xmlToArrayItem = $child;
-                    $data = $this->xml_to_array();
+                    $data = $this->xmlToArray();
                     if ($data) {
                         $result[$child->nodeName] = $data;
                     } elseif (trim($child->nodeValue)) {
@@ -331,7 +331,7 @@ class Parser
                         $groups[$child->nodeName] = 1;
                     }
                     $this->xmlToArrayItem = $child;
-                    $result[$child->nodeName][] = $this->xml_to_array();
+                    $result[$child->nodeName][] = $this->xmlToArray();
                 }
             }
         }
