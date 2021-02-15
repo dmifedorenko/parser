@@ -10,11 +10,9 @@ abstract class SiteParser implements SiteParserInterface
     protected Parser $parser;
     protected OutputInterface $output;
 
-    public function __construct()
+    public function __construct(Parser $parser)
     {
-        $site = strtolower(array_slice(explode('\\', get_class($this)), -1)[0]);
-
-        $this->parser = new Parser($site);
+        $this->parser = $parser;
     }
 
     public function getParser(): Parser
@@ -25,6 +23,10 @@ abstract class SiteParser implements SiteParserInterface
     public function parse(OutputInterface $output): void
     {
         $this->output = $output;
+
+        $site = strtolower(array_slice(explode('\\', get_class($this)), -1)[0]);
+
+        $this->parser->init($site);
         $this->parser->setOutput($output);
 
 //        $this->parser = new Parser($site, $output);

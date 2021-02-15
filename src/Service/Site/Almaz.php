@@ -2,8 +2,8 @@
 
 namespace App\Service\Site;
 
-use function App\pr;
 use Symfony\Component\Console\Output\OutputInterface;
+use function App\pr;
 
 class Almaz extends SiteParser
 {
@@ -19,12 +19,18 @@ class Almaz extends SiteParser
 
         $arts = [];
 
-        foreach ($this->getSections() as $section) {
+        $sections = $this->getSections();
+
+        $this->output->writeln('Sections - ' . count($sections));
+
+        foreach ($sections as $section) {
             $this->getParser()->getUrl($section . '&limit=1200');
 
             $items = $this->getParser()->css('div.product-layout h4 a');
 
             $title = $this->getParser()->css('title');
+
+            $this->output->writeln($title);
 
             foreach ($items as $item) {
                 try {
@@ -58,6 +64,8 @@ class Almaz extends SiteParser
                     }
                     $arts[$art] = 1;
 
+                    $this->output->write('.');
+
                     $this->getParser()->putRowDetails(
                         $title,
                         $art,
@@ -74,6 +82,7 @@ class Almaz extends SiteParser
                     pr($section, $link, $e, $item);
                 }
             }
+            $this->output->writeln('');
         }
     }
 

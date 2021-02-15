@@ -38,6 +38,13 @@ services:
         resource: '../src/Service/Site/*'
         public: true
 
+    App\Service\Parser:
+        arguments:
+            $headers:
+                - 'accept: application/json, text/plain, */*'
+                - 'accept-language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,ca;q=0.6,ny;q=0.5,hu;q=0.4,es;q=0.3'
+                - 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36'
+
     App\Service\YandexDisk:
         public: true
         arguments:

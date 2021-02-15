@@ -16,38 +16,35 @@ class Parser
      * @var false|resource
      */
     private $fHandle;
-
-    private string $defHeaders = 'accept: application/json, text/plain, */*
-        accept-language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,ca;q=0.6,ny;q=0.5,hu;q=0.4,es;q=0.3
-        user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36';
-
+    private int $rows = 0;
     public string $lastPage = '';
     private array $headers = [];
     public int $index = -1;
-    public int $cacheTTLDays = 5;
-
     private string $outPutFile;
-
     public string $rootUrl = '';
     private string $name;
+    public int $cacheTTLDays = 5;
 
     private CssSelectorConverter $converter;
     private OutputInterface $output;
 
-    public function __construct(string $name)
+    public function __construct(array $headers)
     {
-        $this->name = $name;
+        $this->converter = new CssSelectorConverter();
+
+        foreach ($headers as $header) {
+            $this->addHeader(trim($header));
+        }
+    }
+
+    public function init(string $siteName): void
+    {
+        $this->name = $siteName;
         $outName = $this->name . '_out.csv';
         $this->outPutFile = Kernel::get()->getProjectDir() . '/' . Kernel::get()->getContainer()->getParameter('parser')['output'] . '/' . $outName;
 
         $this->fHandle = fopen($this->outPutFile, 'wb');
         fputcsv($this->fHandle, $this->getHeaders());
-
-        foreach (explode(PHP_EOL, $this->defHeaders) as $header) {
-            $this->addHeader(trim($header));
-        }
-
-        $this->converter = new CssSelectorConverter();
     }
 
     public function setOutput(OutputInterface $output): void
@@ -77,6 +74,7 @@ class Parser
     // Коллекция,Артикул,Название,Подробнее,Цена,РРЦ,Размеры,Источник товара,Категория
     public function putRow(array $data): void
     {
+        ++$this->rows;
         fputcsv($this->fHandle, $data);
     }
 
@@ -180,6 +178,9 @@ class Parser
         if ($this->fHandle) {
             fclose($this->fHandle);
         }
+
+        $this->output->writeln('<comment>Total rows count - ' . $this->rows . '</comment>');
+        $this->output->writeln('<comment>' . dirname($this->outPutFile) . '</comment>');
     }
 
     public function check(): void

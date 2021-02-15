@@ -81,8 +81,6 @@ $rules = [
     'binary_operator_spaces' => ['operators' => ['|' => null]],
 ];
 
-echo '124';
-
 return PhpCsFixer\Config::create()
     ->setRiskyAllowed(true)
     ->setRules($rules)
