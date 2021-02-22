@@ -17,6 +17,8 @@ parameters:
                 rootUrl: 'https://kafema.ru'
             almaz:
                 rootUrl: 'https://almaz-diy.ru'
+            kreonopt:
+                rootUrl: 'https://kreonopt.ru'
 
 services:
     # default configuration for services in *this* file
