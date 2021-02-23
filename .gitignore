@@ -1,3 +1,4 @@
+config/passwords.yml
 
 ###> symfony/framework-bundle ###
 /.env.local
