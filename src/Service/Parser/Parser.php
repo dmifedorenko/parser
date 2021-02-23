@@ -16,14 +16,15 @@ class Parser
      * @var false|resource
      */
     private $fHandle;
-    private int $rows = 0;
     public string $lastPage = '';
     private array $headers = [];
-    public int $index = -1;
     private string $outPutFile;
     public string $rootUrl = '';
     private string $name;
     public int $cacheTTLDays = 5;
+    private string $location;
+
+    private array $stat = ['rows' => 0, 'collections' => []];
 
     private CssSelectorConverter $converter;
     private OutputInterface $output;
@@ -72,9 +73,14 @@ class Parser
     }
 
     // Коллекция,Артикул,Название,Подробнее,Цена,РРЦ,Размеры,Источник товара,Категория
+
+    /**
+     * @deprecated
+     * @see Parser::putRowDetails()
+     */
     public function putRow(array $data): void
     {
-        ++$this->rows;
+        ++$this->stat['rows'];
         fputcsv($this->fHandle, $data);
     }
 
@@ -83,18 +89,21 @@ class Parser
         string $art,
         string $name,
         string $description,
-        string $price,
+        float $price,
         string $rrc,
         string $sizes,
         string $source,
         string $category,
         array $images = []
     ): void {
+        $this->stat['collections'][$collection] = 1;
+
         foreach ($images as &$image) {
             if ($this->rootUrl && $image[0] == '/') {
                 $image = $this->rootUrl . $image;
             }
         }
+        $images = array_unique($images);
 
         $this->putRow(array_merge(array_slice(func_get_args(), 0, -1), $images));
     }
@@ -122,6 +131,11 @@ class Parser
         return $context;
     }
 
+    public function getLocation(): string
+    {
+        return $this->location;
+    }
+
     public function getUrl(string $url, string $method = 'GET', array $content = []): string
     {
         $url = trim($url);
@@ -129,6 +143,7 @@ class Parser
         if ($this->rootUrl && stripos($url, $this->rootUrl) !== 0) {
             $url = $this->rootUrl . $url;
         }
+        $this->location = $url;
 
         $context = $this->buildContext($method, $content);
 
@@ -147,9 +162,9 @@ class Parser
             try {
                 $this->output->writeln('Downloading ' . $url);
                 file_put_contents($file, file_get_contents($url, false, $context ? stream_context_create($context) : null), LOCK_EX);
-            } catch (\ErrorException) {
+            } catch (\ErrorException $e) {
                 file_put_contents($file, '404', LOCK_EX);
-                throw new InvalidArgumentException('404 - ' . $url);
+                throw new InvalidArgumentException('404 - ' . $url, 0, $e);
             }
         }
 
@@ -163,11 +178,6 @@ class Parser
         return $all;
     }
 
-    public function setLastPage(string $content): void
-    {
-        $this->lastPage = $content;
-    }
-
     public function getName(): string
     {
         return $this->name;
@@ -179,24 +189,11 @@ class Parser
             fclose($this->fHandle);
         }
 
-        $this->output->writeln('<comment>Total rows count - ' . $this->rows . '</comment>');
+        $this->output->writeln('');
+        $this->output->writeln('<comment>Collections - ' . count($this->stat['collections']) . '</comment>');
+        $this->output->writeln('<comment>Rows - ' . $this->stat['rows'] . '</comment>');
         $this->output->writeln('<comment>' . dirname($this->outPutFile) . '</comment>');
-    }
-
-    public function check(): void
-    {
-        $fh = fopen($this->outPutFile, 'rb');
-        $c = 0;
-        while ($data = fgetcsv($fh)) {
-            ++$c;
-            if ($c > 50) {
-                break;
-            }
-
-            dump($data);
-        }
-
-        fclose($fh);
+        $this->output->writeln('');
     }
 
     private function getDom(): DOMDocument
@@ -208,10 +205,7 @@ class Parser
         return $dom;
     }
 
-    /**
-     * @return DOMNodeList|false
-     */
-    public function getXpath(string $xpath)
+    public function getXpath(string $xpath): DOMNodeList|bool
     {
         static $cache = [];
         $key = crc32($this->lastPage);
@@ -224,10 +218,7 @@ class Parser
         return $domXPath->query($xpath);
     }
 
-    /**
-     * @return array|string
-     */
-    public function css(string $css, bool $allwaysArray = false)
+    public function css(string $css, bool $allwaysArray = false): array|string
     {
         return $this->getArrayFromXpath($this->converter->toXPath($css), $allwaysArray);
     }
@@ -250,10 +241,7 @@ class Parser
         return $data;
     }
 
-    /**
-     * @return array|string
-     */
-    public function getArrayFromXpath(string $xpath, bool $allwaysArray = false)
+    public function getArrayFromXpath(string $xpath, bool $allwaysArray = false): array|string
     {
         $nodes = $this->getXpath($xpath);
         $ret = [];
@@ -292,7 +280,7 @@ class Parser
 
     private $xmlToArrayItem;
 
-    public function xmlToArray()
+    public function xmlToArray(): array|string
     {
         $result = [];
 

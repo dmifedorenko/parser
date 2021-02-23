@@ -21,40 +21,40 @@ class Almaz extends SiteParser
 
         $sections = $this->getSections();
 
-        $this->output->writeln('Sections - ' . count($sections));
+        $this->writeln('Sections - ' . count($sections));
 
         foreach ($sections as $section) {
-            $this->getParser()->getUrl($section . '&limit=1200');
+            $this->parser->getUrl($section . '&limit=1200');
 
-            $items = $this->getParser()->css('div.product-layout h4 a');
+            $items = $this->parser->css('div.product-layout h4 a');
 
-            $title = $this->getParser()->css('title');
+            $title = $this->parser->css('title');
 
-            $this->output->writeln($title);
+            $this->writeln($title);
 
             foreach ($items as $item) {
                 try {
                     $link = $item['@']['href'];
                     $art = $item['span']['_'];
 
-                    $this->getParser()->getUrl($link);
+                    $this->parser->getUrl($link);
 
                     $count = 0;
-                    foreach ($this->getParser()->css('.product_informationss ul.list-unstyled li') as $li) {
+                    foreach ($this->parser->css('.product_informationss ul.list-unstyled li') as $li) {
                         if ($li['div'][0]['span']['_'] === 'Доступно:') {
                             $count = $li['div'][1]['span']['_'];
                         }
                     }
 
-                    $price = $this->getParser()->css('.update_price');
+                    $price = $this->parser->css('.update_price');
 
                     $images = [];
-                    foreach ($this->getParser()->css('#owl-images a') as $image) {
+                    foreach ($this->parser->css('#owl-images a') as $image) {
                         $images[] = $image['@']['href'];
                     }
 
                     if (!$images) {
-                        foreach ($this->getParser()->css('.main_img_box a', true) as $image) {
+                        foreach ($this->parser->css('.main_img_box a', true) as $image) {
                             $images[] = $image['@']['href'];
                         }
                     }
@@ -64,13 +64,13 @@ class Almaz extends SiteParser
                     }
                     $arts[$art] = 1;
 
-                    $this->output->write('.');
+                    $this->write('.');
 
-                    $this->getParser()->putRowDetails(
+                    $this->parser->putRowDetails(
                         $title,
                         $art,
                         $title . ' ' . $art,
-                        $this->getParser()->textFromCss('#tab-description'),
+                        $this->parser->textFromCss('#tab-description'),
                         (float)$price['_'],
                         '',
                         '-@' . $count,
@@ -82,7 +82,7 @@ class Almaz extends SiteParser
                     dd($section, $link, $e, $item);
                 }
             }
-            $this->output->writeln('');
+            $this->writeln();
         }
     }
 
@@ -90,9 +90,9 @@ class Almaz extends SiteParser
     {
         $sections = [];
         foreach (explode(PHP_EOL, $this->options) as $item) {
-            $this->getParser()->getUrl($item);
+            $this->parser->getUrl($item);
 
-            $links = $this->getParser()->css('#content .col-sm-3 a', true);
+            $links = $this->parser->css('#content .col-sm-3 a', true);
 
             foreach ($links as $link) {
                 $sections[] = $link['@']['href'];

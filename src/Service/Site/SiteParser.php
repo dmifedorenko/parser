@@ -29,8 +29,25 @@ abstract class SiteParser implements SiteParserInterface
 
         $this->parser->init($site);
         $this->parser->setOutput($output);
+    }
 
-//        $this->parser = new Parser($site, $output);
-//        $this->parser->rootUrl = $this->rootUrl;
+    protected function css(string $css, bool $allwaysArray = false): string|array
+    {
+        return $this->parser->css($css, $allwaysArray);
+    }
+
+    protected function getUrl(string $url, string $method = 'GET', array $content = []): string
+    {
+        return $this->parser->getUrl($url, $method, $content);
+    }
+
+    protected function write(string $messages, bool $newline = false, int $options = 0): void
+    {
+        $this->output->write($messages, $newline, $options);
+    }
+
+    protected function writeln(string $messages = '', int $options = 0): void
+    {
+        $this->output->writeln($messages, $options);
     }
 }

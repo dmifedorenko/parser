@@ -69,7 +69,7 @@ class Sintez extends SiteParser
         $uniqGoods = array_keys($this->getUniqGoodsUrl());
         shuffle($uniqGoods);
 
-        $this->output->writeln('<comment>Uniq goods - ' . count($uniqGoods) . '</comment>');
+        $this->writeln('<comment>Uniq goods - ' . count($uniqGoods) . '</comment>');
 
         foreach ($uniqGoods as $goodUrl) {
             try {
@@ -91,7 +91,7 @@ class Sintez extends SiteParser
                 }
 
                 if ($skipGood) {
-                    $this->output->writeln('Skip ' . $goodUrl);
+                    $this->writeln('Skip ' . $goodUrl);
                     continue;
                 }
 
@@ -130,7 +130,7 @@ class Sintez extends SiteParser
                     $art,
                     $title,
                     $description,
-                    $price,
+                    (float)$price,
                     '',
                     '@',
                     $this->parser->rootUrl . $goodUrl,
@@ -161,7 +161,7 @@ class Sintez extends SiteParser
         $this->parser->getUrl($url);
         $title = trim(str_replace(PHP_EOL, ' ', $this->parser->css('title')));
         if (stripos($title, 'Каталог') === 0) {
-            $this->output->writeln('<error>Skip catalog url - ' . trim($url) . '</error>');
+            $this->writeln('<error>Skip catalog url - ' . trim($url) . '</error>');
 
             return;
         }
