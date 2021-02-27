@@ -16,6 +16,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.8",
         "phpdocumentor/reflection-docblock": "^5.2",
+        "phpoffice/phpspreadsheet": "^1.16",
         "sensio/framework-extra-bundle": "^6.0",
         "sensiolabs/security-checker": "^6.0",
         "symfony/asset": "5.2.*",

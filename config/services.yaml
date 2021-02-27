@@ -45,7 +45,7 @@ services:
         resource: '../src/Service/Site/*'
         public: true
 
-    App\Service\Parser:
+    App\Service\Parser\Parser:
         arguments:
             $headers:
                 - 'accept: application/json, text/plain, */*'

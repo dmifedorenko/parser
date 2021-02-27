@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Site;
 
-use App\Service\Parser;
+use App\Service\Parser\Parser;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class SiteParser implements SiteParserInterface

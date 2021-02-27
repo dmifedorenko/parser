@@ -2,7 +2,7 @@
 
 namespace App\Service\Site;
 
-use App\Service\Parser;
+use App\Service\Parser\Parser;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 

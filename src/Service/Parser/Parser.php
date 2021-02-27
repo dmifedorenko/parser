@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Parser;
 
 use App\Kernel;
 use DOMDocument;
@@ -73,12 +73,7 @@ class Parser
     }
 
     // Коллекция,Артикул,Название,Подробнее,Цена,РРЦ,Размеры,Источник товара,Категория
-
-    /**
-     * @deprecated
-     * @see Parser::putRowDetails()
-     */
-    public function putRow(array $data): void
+    private function putRow(array $data): void
     {
         ++$this->stat['rows'];
         fputcsv($this->fHandle, $data);
@@ -93,7 +88,7 @@ class Parser
         string $rrc,
         string $sizes,
         string $source,
-        string $category,
+        int $category,
         array $images = []
     ): void {
         $this->stat['collections'][$collection] = 1;
