@@ -5,16 +5,19 @@ declare(strict_types=1);
 namespace App\Service\Site;
 
 use App\Service\Parser\Parser;
+use App\Service\YandexDisk;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class SiteParser implements SiteParserInterface
 {
     protected Parser $parser;
     protected OutputInterface $output;
+    protected YandexDisk $yandexDisk;
 
-    public function __construct(Parser $parser)
+    public function __construct(Parser $parser, YandexDisk $yandexDisk)
     {
         $this->parser = $parser;
+        $this->yandexDisk = $yandexDisk;
     }
 
     public function getParser(): Parser
@@ -30,6 +33,7 @@ abstract class SiteParser implements SiteParserInterface
 
         $this->parser->init($site);
         $this->parser->setOutput($output);
+        $this->yandexDisk->setAppName($this->parser->getName());
     }
 
     protected function css(string $css, bool $allwaysArray = false): string|array

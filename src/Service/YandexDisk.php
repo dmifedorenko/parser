@@ -134,6 +134,9 @@ class YandexDisk
             }
             unlink($file);
 
+            // Беслпатный аккаунт Яндекса не дает быстро заливать файлы
+            sleep(3);
+
             $this->request('PUT', 'resources/publish', ['path' => $path]);
 
             $response = $this->request('GET', 'resources', ['path' => $path]);

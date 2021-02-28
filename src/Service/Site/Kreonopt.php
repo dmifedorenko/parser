@@ -3,6 +3,7 @@
 namespace App\Service\Site;
 
 use App\Service\Parser\Parser;
+use App\Service\YandexDisk;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -17,9 +18,9 @@ class Kreonopt extends SiteParser
     ];
     private string $collectionUrl;
 
-    public function __construct(Parser $parser, HttpClientInterface $httpClient)
+    public function __construct(Parser $parser, YandexDisk $yandexDisk, HttpClientInterface $httpClient)
     {
-        parent::__construct($parser);
+        parent::__construct($parser, $yandexDisk);
         $this->httpClient = $httpClient;
     }
 

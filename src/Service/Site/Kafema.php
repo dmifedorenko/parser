@@ -4,20 +4,13 @@ declare(strict_types=1);
 
 namespace App\Service\Site;
 
-use App\Kernel;
-use App\Service\YandexDisk;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Kafema extends SiteParser
 {
-    private YandexDisk $yandexDisk;
-
     public function parse(OutputInterface $output): void
     {
         parent::parse($output);
-
-        $this->yandexDisk = Kernel::get()->getContainer()->get(YandexDisk::class);
-        $this->yandexDisk->setAppName($this->parser->getName());
 
         foreach ($this->getCollections() as $collection) {
             $urls = $this->getGoodsUrls($collection);
@@ -36,7 +29,7 @@ class Kafema extends SiteParser
                         '',
                         $good['size'],
                         $good['source'],
-                        '',
+                        0,
                         $good['images']
                     );
                 }

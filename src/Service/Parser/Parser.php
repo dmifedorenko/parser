@@ -84,13 +84,18 @@ class Parser
         string $art,
         string $name,
         string $description,
-        float $price,
+        string|float $price,
         string $rrc,
         string $sizes,
         string $source,
         int $category,
         array $images = []
     ): void {
+        if (is_string($price)) {
+            $price = str_replace([',', ' '], ['.', ''], $price);
+            $price = (float)$price;
+        }
+
         $this->stat['collections'][$collection] = 1;
 
         foreach ($images as &$image) {
@@ -100,7 +105,21 @@ class Parser
         }
         $images = array_unique($images);
 
-        $this->putRow(array_merge(array_slice(func_get_args(), 0, -1), $images));
+        if (!$category) {
+            $category = '';
+        }
+
+        $this->putRow(array_merge([
+            $collection,
+            $art,
+            $name,
+            $description,
+            $price,
+            $rrc,
+            $sizes,
+            $source,
+            $category,
+        ], $images));
     }
 
     private function buildContext(string $method, array $content): ?array
