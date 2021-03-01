@@ -131,11 +131,11 @@ class Sintez extends SiteParser
                     $art,
                     $title,
                     $description,
-                    (float)$price,
+                    $price,
                     '',
                     '@',
                     $this->parser->rootUrl . $goodUrl,
-                    '',
+                    0,
                     $images
                 );
             } catch (\Throwable $e) {

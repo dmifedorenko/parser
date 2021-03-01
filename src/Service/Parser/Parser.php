@@ -109,6 +109,10 @@ class Parser
             $category = '';
         }
 
+        if ($price < 30) {
+            $this->output->writeln("<error>Low price - {$art}/{$price}</error>");
+        }
+
         $this->putRow(array_merge([
             $collection,
             $art,

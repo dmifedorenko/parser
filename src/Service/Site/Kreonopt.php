@@ -16,7 +16,6 @@ class Kreonopt extends SiteParser
         'email' => 'veleri1029@gmail.com',
         'password' => 'lerafe100sp',
     ];
-    private string $collectionUrl;
 
     public function __construct(Parser $parser, YandexDisk $yandexDisk, HttpClientInterface $httpClient)
     {
@@ -98,7 +97,7 @@ class Kreonopt extends SiteParser
 
         $tds = $this->css('.table.div_pc td');
         if ($tds[2] === '50-150 тыс. руб.') {
-            $price = (float)str_replace(',', '.', $tds[3]['_']);
+            $price = $tds[3]['_'];
         }
 
         $title = $this->parser->textFromCss('h1');

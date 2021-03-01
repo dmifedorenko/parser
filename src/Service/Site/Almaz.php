@@ -72,7 +72,7 @@ class Almaz extends SiteParser
                         $art,
                         $title . ' ' . $art,
                         $this->parser->textFromCss('#tab-description'),
-                        (float)$price['_'],
+                        $price['_'],
                         '',
                         '-@' . $count,
                         $link,
