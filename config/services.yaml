@@ -45,6 +45,15 @@ services:
         resource: '../src/Service/Site/*'
         public: true
 
+    App\Service\Site\Kreonopt:
+        public: true
+        arguments:
+            $settings:
+                - '%kreonopt_login%'
+                - '%kreonopt_pass%'
+                - '%kreonopt_cookie_default%'
+                - '%kreonopt_cookie_session%'
+
     App\Service\Parser\Parser:
         arguments:
             $headers:

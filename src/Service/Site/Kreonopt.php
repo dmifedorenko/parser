@@ -11,16 +11,21 @@ class Kreonopt extends SiteParser
 {
     private HttpClientInterface $httpClient;
 
-    private const COOKIES = 'language=ru-ru; currency=RUB; default=4b08cb3ad0fc27ad144b3216f591e8e9; PHPSESSID=2f2e7d8a498c1426eb4fc441b92959a2';
-    private const AUTH = [
-        'email' => 'veleri1029@gmail.com',
-        'password' => 'lerafe100sp',
+    private $COOKIES = 'language=ru-ru; currency=RUB; default=%s; PHPSESSID=%s';
+    private $AUTH = [
+        'email' => null,
+        'password' => null,
     ];
 
-    public function __construct(Parser $parser, YandexDisk $yandexDisk, HttpClientInterface $httpClient)
+    public function __construct(Parser $parser, YandexDisk $yandexDisk, HttpClientInterface $httpClient, array $settings)
     {
         parent::__construct($parser, $yandexDisk);
         $this->httpClient = $httpClient;
+
+        $this->AUTH['email'] = $settings[0];
+        $this->AUTH['password'] = $settings[1];
+
+        $this->COOKIES = sprintf($this->COOKIES, $settings[2], $settings[3]);
     }
 
     public function parse(OutputInterface $output): void
@@ -29,10 +34,13 @@ class Kreonopt extends SiteParser
 
         $this->auth();
 
+        $brands = $this->getGoodInBrands();
         $sections = $this->getSections();
+
+        $this->writeln('Brands - ' . count($brands));
         $this->writeln('Sections - ' . count($sections));
 
-        foreach ($sections as $link => $sectionName) {
+        foreach (array_merge($sections, $brands) as $link => $sectionName) {
             try {
                 $this->getUrl($link);
                 $this->processPage($link);
@@ -63,11 +71,11 @@ class Kreonopt extends SiteParser
 
     private function auth(): void
     {
-        $this->httpClient->request('POST', $this->parser->rootUrl . '/store/login', ['body' => self::AUTH, 'headers' => [
-            'cookie: ' . self::COOKIES,
+        $this->httpClient->request('POST', $this->parser->rootUrl . '/store/login', ['body' => $this->AUTH, 'headers' => [
+            'cookie: ' . $this->COOKIES,
         ]]);
 
-        $this->parser->addHeader('cookie: ' . self::COOKIES);
+        $this->parser->addHeader('cookie: ' . $this->COOKIES);
         $this->getUrl('/store/');
 
         assert($this->css('#top-links a')[5]['_'] ?? null === 'Выход');
@@ -77,7 +85,7 @@ class Kreonopt extends SiteParser
     {
         $this->getUrl($pageUrl);
 
-        $goods = $this->css('.product-layout .caption a');
+        $goods = $this->css('.product-layout .caption a', true);
 
         $path = $this->css('.breadcrumb a');
         $collectionName = $path[1]['_'];
@@ -116,6 +124,14 @@ class Kreonopt extends SiteParser
             $images[] = $slide['@']['src'];
         }
 
+        static $doneArts = [];
+        if (array_key_exists($art, $doneArts)) {
+            $this->write('-');
+
+            return;
+        }
+        $doneArts[$art] = 1;
+
         $this->parser->putRowDetails(
             $collectionName,
             $art,
@@ -128,5 +144,17 @@ class Kreonopt extends SiteParser
             4685,
             $images
         );
+    }
+
+    private function getGoodInBrands(): array
+    {
+        $this->parser->getUrl('/store/brands');
+
+        $brands = [];
+        foreach ($this->css('.manufacturer-grid a') as $link) {
+            $brands[$link['@']['href']] = $this->css('h1');
+        }
+
+        return $brands;
     }
 }
