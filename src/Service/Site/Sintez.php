@@ -60,11 +60,14 @@ class Sintez extends SiteParser
         https://sintezf.com/shop/catalog/siropy-monin/48
         https://sintezf.com/shop/catalog/siropy-monin-keddi/49
         https://sintezf.com/shop/catalog/smesi-dlya-morozhenogo-i-kokteyley/700
-        https://sintezf.com/shop/catalog/toppingi-i-napitki/57';
+        https://sintezf.com/shop/catalog/toppingi-i-napitki/57
+        https://sintezf.com/shop/catalog/bonna/796';
 
     public function parse(OutputInterface $output): void
     {
         parent::parse($output);
+
+        $this->parser->lowPriceLimit = 2;
 
         $output->writeln('Make good links');
         $uniqGoods = array_keys($this->getUniqGoodsUrl());

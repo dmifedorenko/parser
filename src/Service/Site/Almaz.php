@@ -18,7 +18,7 @@ class Almaz extends SiteParser
     {
         parent::parse($output);
 
-        $arts = [];
+        $this->parser->uniqArts = true;
 
         $sections = $this->getSections();
 
@@ -27,7 +27,7 @@ class Almaz extends SiteParser
         foreach ($sections as $section) {
             $this->parser->getUrl($section . '&limit=1200');
 
-            $items = $this->parser->css('div.product-layout h4 a');
+            $items = $this->parser->css('div.product-layout h4 a', true);
 
             $title = $this->parser->css('title');
 
@@ -59,11 +59,6 @@ class Almaz extends SiteParser
                             $images[] = $image['@']['href'];
                         }
                     }
-
-                    if (isset($arts[$art])) {
-                        continue;
-                    }
-                    $arts[$art] = 1;
 
                     $this->write('.');
 

@@ -26,6 +26,7 @@ class Kreonopt extends SiteParser
         $this->AUTH['password'] = $settings[1];
 
         $this->COOKIES = sprintf($this->COOKIES, $settings[2], $settings[3]);
+        $this->parser->uniqArts = true;
     }
 
     public function parse(OutputInterface $output): void
@@ -123,14 +124,6 @@ class Kreonopt extends SiteParser
         foreach ($slides as $slide) {
             $images[] = $slide['@']['src'];
         }
-
-        static $doneArts = [];
-        if (array_key_exists($art, $doneArts)) {
-            $this->write('-');
-
-            return;
-        }
-        $doneArts[$art] = 1;
 
         $this->parser->putRowDetails(
             $collectionName,

@@ -16,12 +16,23 @@ class Parser
      * @var false|resource
      */
     private $fHandle;
+
     public string $lastPage = '';
+
     private array $headers = [];
+
     private string $outPutFile;
+
     public string $rootUrl = '';
+
     private string $name;
+
     public int $cacheTTLDays = 5;
+
+    public bool $uniqArts = false;
+
+    public int $lowPriceLimit = 30;
+
     private string $location;
 
     private array $stat = ['rows' => 0, 'collections' => []];
@@ -81,7 +92,7 @@ class Parser
 
     public function putRowDetails(
         string $collection,
-        string $art,
+        string|int $art,
         string $name,
         string $description,
         string|float $price,
@@ -109,9 +120,17 @@ class Parser
             $category = '';
         }
 
-        if ($price < 30) {
+        if ($price < $this->lowPriceLimit) {
             $this->output->writeln("<error>Low price - {$art}/{$price}</error>");
         }
+
+        static $doneArts = [];
+        if (array_key_exists($art, $doneArts)) {
+            $this->output->writeln('Skip non uniq art -' . $art);
+
+            return;
+        }
+        $doneArts[$art] = 1;
 
         $this->putRow(array_merge([
             $collection,

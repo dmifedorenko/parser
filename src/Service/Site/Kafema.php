@@ -19,6 +19,13 @@ class Kafema extends SiteParser
             $output->writeln($cname);
 
             foreach ($urls as $url) {
+                try {
+                    $this->parser->getUrl($url);
+                } catch (\Throwable $e) {
+                    $this->output->writeln('<error>' . $url . ' - ' . $e->getMessage() . '</error>');
+                    continue;
+                }
+
                 foreach ($this->getGoodDetails($url, in_array($collection['name'], ['Свежеобжаренный кофе Kafema', 'Чай Teejur'], true), $cname) as $good) {
                     $this->parser->putRowDetails(
                         $good['collection'],
