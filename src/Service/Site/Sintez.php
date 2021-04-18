@@ -122,7 +122,7 @@ class Sintez extends SiteParser
                 }
 
                 //$description = $this->parser->css('li.list-group-item', true);
-                $description = trim($this->parser->getTextFromXpath('(//li[@class="list-group-item"])[2]'));
+                $description = trim($this->parser->getTextFromXpath($this->parser->getXpath('(//li[@class="list-group-item"])[2]')));
 
                 $images = [];
                 foreach ($this->parser->css('.ubislider-inner img', true) as $item) {

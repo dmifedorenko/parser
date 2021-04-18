@@ -72,7 +72,7 @@ class Almaz extends SiteParser
                         '-@' . $count,
                         $link,
                         107171,
-                        $images
+                        array_filter($images)
                     );
                 } catch (\Throwable $e) {
                     dd($section, $link, $e, $item);

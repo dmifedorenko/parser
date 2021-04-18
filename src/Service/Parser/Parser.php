@@ -34,8 +34,8 @@ class Parser
     public int $lowPriceLimit = 30;
 
     private string $location;
-
     private array $stat = ['rows' => 0, 'collections' => []];
+    private DOMNodeList $lastNodes;
 
     private CssSelectorConverter $converter;
     private OutputInterface $output;
@@ -160,7 +160,7 @@ class Parser
                 'http' => [
                     'method' => $method,
                     'header' => implode("\r\n", $this->headers),
-                    'content' => $rawContent ? $rawContent : ($content ? http_build_query($content) : null),
+                    'content' => $rawContent ?: ($content ? http_build_query($content) : null),
                 ],
             ];
         }
@@ -200,19 +200,13 @@ class Parser
                 $this->output->writeln('Downloading ' . $url);
                 file_put_contents($file, file_get_contents($url, false, $context ? stream_context_create($context) : null), LOCK_EX);
             } catch (\ErrorException $e) {
-                file_put_contents($file, '404', LOCK_EX);
                 throw new InvalidArgumentException('404 - ' . $url, 0, $e);
             }
         }
 
-        $all = file_get_contents($file);
-        if ($all == '404') {
-            throw new InvalidArgumentException('404 - ' . $url . PHP_EOL . $file);
-        }
+        $this->lastPage = file_get_contents($file);
 
-        $this->lastPage = $all;
-
-        return $all;
+        return $this->lastPage;
     }
 
     public function getName(): string
@@ -242,7 +236,12 @@ class Parser
         return $dom;
     }
 
-    public function getXpath(string $xpath): DOMNodeList|bool
+    public function getLastNodeList(): DOMNodeList
+    {
+        return $this->lastNodes;
+    }
+
+    public function getXpath(string $xpath, \DOMElement $element = null): DOMNodeList|bool
     {
         static $cache = [];
         $key = crc32($this->lastPage);
@@ -252,17 +251,30 @@ class Parser
 
         $domXPath = $cache[$key];
 
-        return $domXPath->query($xpath);
+        if ($element) {
+            $xpath = $element->getNodePath() . '/' . $xpath;
+        }
+
+        $nodes = $domXPath->query($xpath);
+        if (!$element) {
+            $this->lastNodes = $nodes;
+        }
+
+        return $nodes;
     }
 
-    public function css(string $css, bool $allwaysArray = false): array|string
+    public function css(string $css, bool $allwaysArray = false, \DOMElement $root = null): array|string
     {
-        return $this->getArrayFromXpath($this->converter->toXPath($css), $allwaysArray);
+        $nodes = $this->getXpath($this->converter->toXPath($css), $root);
+
+        return $this->getArrayFromXpath($nodes, $allwaysArray);
     }
 
-    public function textFromCss(string $css): string
+    public function textFromCss(string $css, \DOMElement $root = null): string
     {
-        return $this->getTextFromXpath($this->converter->toXPath($css));
+        $nodes = $this->getXpath($this->converter->toXPath($css), $root);
+
+        return $this->getTextFromXpath($nodes);
     }
 
     public function getBitrixGoodData(): array
@@ -278,9 +290,8 @@ class Parser
         return $data;
     }
 
-    public function getArrayFromXpath(string $xpath, bool $allwaysArray = false): array|string
+    public function getArrayFromXpath(DOMNodeList $nodes, bool $allwaysArray = false): array|string
     {
-        $nodes = $this->getXpath($xpath);
         $ret = [];
         foreach ($nodes as $node) {
             $this->xmlToArrayItem = $node;
@@ -294,9 +305,8 @@ class Parser
         return $ret;
     }
 
-    public function getTextFromXpath(string $xpath): string
+    public function getTextFromXpath(DOMNodeList $nodes): string
     {
-        $nodes = $this->getXpath($xpath);
         $text = [];
         foreach ($nodes as $node) {
             /**

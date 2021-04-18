@@ -24,6 +24,9 @@ parameters:
                 rootUrl: 'https://almaz-diy.ru'
             kreonopt:
                 rootUrl: 'https://kreonopt.ru'
+            bigholiday:
+                cacheTTLDays: 5
+                rootUrl: 'http://bigholiday25.ru'
 
 services:
     # default configuration for services in *this* file
