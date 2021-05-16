@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 $finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__)
+    ->in(__DIR__ . '/src')
     ->exclude('var')
 ;
 
@@ -63,14 +63,14 @@ $rules = [
     'phpdoc_trim_consecutive_blank_line_separation' => true,
     'phpdoc_var_without_name' => false, // это пришлось выключить чтобы сохранить $this аннотации в шаблонах
     'pow_to_exponentiation' => true,
-    'psr4' => false,
+    'psr_autoloading' => false,
     'random_api_migration' => true,
     'self_accessor' => true,
     'set_type_to_cast' => true,
     // 'simple_to_complex_string_variable' => true,
     'ternary_operator_spaces' => true,
     'ternary_to_null_coalescing' => true,
-    'visibility_required' => ['property', 'method', 'const'],
+    'visibility_required' => true,
     'void_return' => true,
     'yoda_style' => false,
     'no_alternative_syntax' => false,
@@ -81,9 +81,9 @@ $rules = [
     'binary_operator_spaces' => ['operators' => ['|' => null]],
 ];
 
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)
     ->setRules($rules)
     ->setUsingCache(true)
-    ->setCacheFile(__DIR__ . '/.php_cs.cache')
+    ->setCacheFile(__DIR__ . '/.php-cs-fixer.cache')
     ->setFinder($finder);

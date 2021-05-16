@@ -27,7 +27,7 @@ class Parser
 
     private string $name;
 
-    public int $cacheTTLDays = 5;
+    public int $cacheTTLDays = 1;
 
     public bool $uniqArts = false;
 

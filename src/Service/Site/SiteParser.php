@@ -29,7 +29,7 @@ abstract class SiteParser implements SiteParserInterface
     {
         $this->output = $output;
 
-        $site = strtolower(array_slice(explode('\\', get_class($this)), -1)[0]);
+        $site = strtolower(array_slice(explode('\\', static::class), -1)[0]);
 
         $this->parser->init($site);
         $this->parser->setOutput($output);

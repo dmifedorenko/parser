@@ -18,7 +18,7 @@ parameters:
                 cacheTTLDays: 1
                 rootUrl: 'https://sintezf.com'
             kafema:
-                cacheTTLDays: 3
+                cacheTTLDays: 1
                 rootUrl: 'https://kafema.ru'
             almaz:
                 rootUrl: 'https://almaz-diy.ru'
