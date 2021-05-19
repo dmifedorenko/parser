@@ -44,9 +44,10 @@ class Kreonopt extends SiteParser
         foreach (array_merge($sections, $brands) as $link => $sectionName) {
             try {
                 $this->getUrl($link);
+                $pages = $this->css('.pagination a', true);
+
                 $this->processPage($link);
 
-                $pages = $this->css('.pagination a', true);
                 foreach ($pages as $page) {
                     $this->processPage($page['@']['href']);
                 }
@@ -102,6 +103,7 @@ class Kreonopt extends SiteParser
 
     private function processGood(string $collectionName, string $goodUrl): void
     {
+        $goodUrl = preg_replace('~\?page=\d+$~', '', $goodUrl);
         $this->getUrl($goodUrl);
 
         $tds = $this->css('.table.div_pc td');

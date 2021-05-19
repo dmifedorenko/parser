@@ -8,18 +8,25 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Bigholiday extends SiteParser
 {
-    private string $sections = '/upakovka/
-        /naturalnye-materialy-dlya-dekora-i-floristiki/
-        /morskie-suveniry/
-        /predmety-dlya-interera-i-dekora/
-        /svadebnaya-produkciya/
-        /svechi-i-podsvechniki/
-        /dekorativnye-ukrasheniya/
-        /iskusstvennye-cvety/';
+    public const STOCK_OK = 'На складе';
+    public const STOCK_NOT = 'Заканчивается';
+
+    private array $sections = [
+        '/upakovka/',
+        '/naturalnye-materialy-dlya-dekora-i-floristiki/',
+        '/morskie-suveniry/',
+        '/predmety-dlya-interera-i-dekora/',
+        '/svadebnaya-produkciya/',
+        '/svechi-i-podsvechniki/',
+        '/dekorativnye-ukrasheniya/',
+        '/iskusstvennye-cvety/',
+    ];
 
     public function parse(OutputInterface $output): void
     {
         parent::parse($output);
+
+        $goods = [];
 
         $this->parser->uniqArts = true;
         $sections = $this->getSections();
@@ -43,20 +50,23 @@ class Bigholiday extends SiteParser
                     $name = $this->parser->textFromCss('.name', $goodNodes);
                     $stock = $this->parser->textFromCss('.oct-cat-stock', $goodNodes);
 
-                    dump($name . ' - ' . $stock);
+                    if ($stock == self::STOCK_OK) {
+                        $goods[] = $this->parser->css('a', true, $goodNodes)[0]['@']['href'];
+                    } elseif ($stock != self::STOCK_NOT) {
+                        throw new \InvalidArgumentException();
+                    }
                 }
-
-                dd($page);
             }
-
-            dd();
         }
+
+        $goods = array_unique($goods);
+        $this->parseGoods($goods);
     }
 
     private function getSections(): array
     {
         $sections = [];
-        foreach (explode(PHP_EOL, $this->sections) as $item) {
+        foreach ($this->sections as $item) {
             $this->parser->getUrl($item);
 
             $links = $this->parser->css('.box-content .active a', true);
@@ -73,5 +83,19 @@ class Bigholiday extends SiteParser
         }
 
         return $sections;
+    }
+
+    private function parseGoods(array $goods): void
+    {
+        $this->output->writeln('Total goods count - ' . count($goods));
+
+        foreach ($goods as $c => $good) {
+            if ($c && $c / 100 == 0) {
+                $this->writeln($c);
+            }
+            $this->parser->getUrl($good);
+        }
+
+        $this->output->writeln('');
     }
 }
