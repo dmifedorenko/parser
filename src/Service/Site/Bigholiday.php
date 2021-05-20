@@ -60,7 +60,7 @@ class Bigholiday extends SiteParser
         }
 
         $goods = array_unique($goods);
-        shuffle($goods);
+        //shuffle($goods);
         $this->parseGoods($goods);
     }
 
@@ -98,7 +98,13 @@ class Bigholiday extends SiteParser
             if ($c && $c % 50 == 0) {
                 $this->writeln('Done ' . $c);
             }
-            $this->parser->getUrl($goodUrl);
+
+            try {
+                $this->parser->getUrl($goodUrl);
+            } catch (\Throwable $e) {
+                $this->writeln("<error>{$e->getMessage()} - {$goodUrl}</error>");
+                continue;
+            }
 
             $images = [];
             foreach ($this->parser->css('.all-carousel a', true) as $item) {
@@ -107,11 +113,17 @@ class Bigholiday extends SiteParser
 
             $collectionName = $this->parser->css('ul.breadcrumb li span', true)[1]['_'];
 
-            $count = $this->parser->css('input#stock_quantity')['@']['value'];
+            $count = $this->parser->css('input#stock_quantity')['@']['value'] ?? 0;
+            if (!$count) {
+                $this->writeln("Skipt count zero - {$goodUrl}");
+                continue;
+            }
+
             $minimumval = $this->parser->css('input#minimumval')['@']['value'];
 
             if ($minimumval != 1) {
                 $this->writeln("Skipt minimum {$minimumval} - {$goodUrl}");
+                continue;
             }
 
             $price = (float)str_replace(' ', '', $this->parser->textFromCss('.price .price-new'));
