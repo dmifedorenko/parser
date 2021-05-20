@@ -18,3 +18,4 @@ config/passwords.yml
 /.idea/
 
 /.php-cs-fixer.cache
+/.phpcs-cache

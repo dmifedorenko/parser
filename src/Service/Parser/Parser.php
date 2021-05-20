@@ -121,12 +121,12 @@ class Parser
         }
 
         if ($price < $this->lowPriceLimit) {
-            $this->output->writeln("<error>Low price - {$art}/{$price}</error>");
+            $this->output->writeln("<error>Low price {$art} - {$price} " . $this->getLocation() . '</error>');
         }
 
         static $doneArts = [];
         if (array_key_exists($art, $doneArts)) {
-            $this->output->writeln('Skip non uniq art -' . $art);
+            $this->output->writeln('Skip non uniq art "' . $art . '". ' . $this->getLocation());
 
             return;
         }
@@ -197,7 +197,7 @@ class Parser
 
         if (!file_exists($file) || ($this->cacheTTLDays && (time() - filemtime($file)) / 60 / 60 / 24 > $this->cacheTTLDays)) {
             try {
-                $this->output->writeln('Downloading ' . $url);
+                //$this->output->writeln('Downloading ' . $url);
                 file_put_contents($file, file_get_contents($url, false, $context ? stream_context_create($context) : null), LOCK_EX);
             } catch (\ErrorException $e) {
                 throw new InvalidArgumentException('404 - ' . $url, 0, $e);
@@ -268,6 +268,11 @@ class Parser
         $nodes = $this->getXpath($this->converter->toXPath($css), $root);
 
         return $this->getArrayFromXpath($nodes, $allwaysArray);
+    }
+
+    public function cssArray(string $css, \DOMElement $root = null): array|string
+    {
+        return $this->css($css, true, $root);
     }
 
     public function textFromCss(string $css, \DOMElement $root = null): string

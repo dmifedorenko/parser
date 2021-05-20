@@ -25,7 +25,7 @@ parameters:
             kreonopt:
                 rootUrl: 'https://kreonopt.ru'
             bigholiday:
-                cacheTTLDays: 5
+                cacheTTLDays: 500
                 rootUrl: 'http://bigholiday25.ru'
 
 services:

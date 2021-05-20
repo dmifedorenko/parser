@@ -29,6 +29,8 @@ class Bigholiday extends SiteParser
         $goods = [];
 
         $this->parser->uniqArts = true;
+        $this->parser->lowPriceLimit = 2;
+
         $sections = $this->getSections();
 
         $this->writeln('Sections - ' . count($sections));
@@ -47,9 +49,7 @@ class Bigholiday extends SiteParser
                 foreach ($this->css('#content #res-products .product .product-about') as $index => $good) {
                     $goodNodes = $this->parser->getLastNodeList()[$index];
 
-                    $name = $this->parser->textFromCss('.name', $goodNodes);
                     $stock = $this->parser->textFromCss('.oct-cat-stock', $goodNodes);
-
                     if ($stock == self::STOCK_OK) {
                         $goods[] = $this->parser->css('a', true, $goodNodes)[0]['@']['href'];
                     } elseif ($stock != self::STOCK_NOT) {
@@ -60,6 +60,7 @@ class Bigholiday extends SiteParser
         }
 
         $goods = array_unique($goods);
+        shuffle($goods);
         $this->parseGoods($goods);
     }
 
@@ -67,6 +68,10 @@ class Bigholiday extends SiteParser
     {
         $sections = [];
         foreach ($this->sections as $item) {
+//            if (count($this->sections) >= 5) {
+//                break;
+//            }
+
             $this->parser->getUrl($item);
 
             $links = $this->parser->css('.box-content .active a', true);
@@ -89,11 +94,44 @@ class Bigholiday extends SiteParser
     {
         $this->output->writeln('Total goods count - ' . count($goods));
 
-        foreach ($goods as $c => $good) {
-            if ($c && $c / 100 == 0) {
-                $this->writeln($c);
+        foreach ($goods as $c => $goodUrl) {
+            if ($c && $c % 50 == 0) {
+                $this->writeln('Done ' . $c);
             }
-            $this->parser->getUrl($good);
+            $this->parser->getUrl($goodUrl);
+
+            $images = [];
+            foreach ($this->parser->css('.all-carousel a', true) as $item) {
+                $images[] = $item['@']['href'];
+            }
+
+            $collectionName = $this->parser->css('ul.breadcrumb li span', true)[1]['_'];
+
+            $count = $this->parser->css('input#stock_quantity')['@']['value'];
+            $minimumval = $this->parser->css('input#minimumval')['@']['value'];
+
+            if ($minimumval != 1) {
+                $this->writeln("Skipt minimum {$minimumval} - {$goodUrl}");
+            }
+
+            $price = (float)str_replace(' ', '', $this->parser->textFromCss('.price .price-new'));
+
+            $this->parser->putRowDetails(
+                $collectionName,
+                $this->parser->textFromCss('.description span[itemprop="model"]'),
+                $this->parser->textFromCss('h1'),
+                $this->parser->textFromCss('div#tab-description'),
+                $price,
+                '',
+                '-@' . $count,
+                $goodUrl,
+                0,
+                $images
+            );
+
+//            if ($c >= 199) {
+//                break;
+//            }
         }
 
         $this->output->writeln('');
