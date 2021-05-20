@@ -96,7 +96,7 @@ class Bigholiday extends SiteParser
 
         foreach ($goods as $c => $goodUrl) {
             if ($c && $c % 50 == 0) {
-                $this->writeln('Done ' . $c);
+                $this->writeln('Done ' . $c . '/' . count($goods));
             }
 
             try {
