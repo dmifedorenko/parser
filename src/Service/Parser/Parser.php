@@ -33,6 +33,8 @@ class Parser
 
     public int $lowPriceLimit = 30;
 
+    public int $sleepOnLoad = 0;
+
     private string $location;
     private array $stat = ['rows' => 0, 'collections' => []];
     private DOMNodeList $lastNodes;
@@ -173,7 +175,7 @@ class Parser
         return $this->location;
     }
 
-    public function getUrl(string $url, string $method = 'GET', array $content = []): string
+    public function getUrl(string $url, string $method = 'GET', array $content = [], bool $force = false): string
     {
         $url = trim($url);
 
@@ -194,11 +196,17 @@ class Parser
             mkdir($tmpDir);
         }
         $file = $tmpDir . '/' . $this->name . '_' . $id;
+        if ($force) {
+            unlink($file);
+        }
 
         if (!file_exists($file) || ($this->cacheTTLDays && (time() - filemtime($file)) / 60 / 60 / 24 > $this->cacheTTLDays)) {
             try {
                 //$this->output->writeln('Downloading ' . $url);
                 file_put_contents($file, file_get_contents($url, false, $context ? stream_context_create($context) : null), LOCK_EX);
+                if ($this->sleepOnLoad) {
+                    usleep($this->sleepOnLoad);
+                }
             } catch (\ErrorException $e) {
                 throw new InvalidArgumentException('404 - ' . $url, 0, $e);
             }

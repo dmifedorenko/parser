@@ -24,6 +24,9 @@ parameters:
                 rootUrl: 'https://almaz-diy.ru'
             kreonopt:
                 rootUrl: 'https://kreonopt.ru'
+            ozon:
+                cacheTTLDays: 500
+                rootUrl: 'https://www.ozon.ru'
             bigholiday:
                 cacheTTLDays: 500
                 rootUrl: 'http://bigholiday25.ru'

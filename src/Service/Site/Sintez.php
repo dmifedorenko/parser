@@ -75,7 +75,13 @@ class Sintez extends SiteParser
 
         $this->writeln('<comment>Uniq goods - ' . count($uniqGoods) . '</comment>');
 
+        $c = 0;
         foreach ($uniqGoods as $goodUrl) {
+            ++$c;
+            if ($c % 50 == 0) {
+                $this->writeln('Done ' . $c . '/' . count($uniqGoods));
+            }
+
             try {
                 $this->parser->getUrl($goodUrl);
 
