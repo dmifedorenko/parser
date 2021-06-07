@@ -85,7 +85,7 @@ class Sintez extends SiteParser
             try {
                 $this->parser->getUrl($goodUrl);
 
-                $title = trim($this->parser->css('h3.panel-title')['_']);
+                $title = trim($this->parser->css('h1.panel-title')['_']);
 
                 $breads = $this->parser->css('.breadcrumb li a');
 
@@ -148,7 +148,7 @@ class Sintez extends SiteParser
                     $images
                 );
             } catch (\Throwable $e) {
-                dump($goodUrl, $e);
+                dd($goodUrl, $e);
                 continue;
             }
         }
