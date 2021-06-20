@@ -61,7 +61,28 @@ class Sintez extends SiteParser
         https://sintezf.com/shop/catalog/siropy-monin-keddi/49
         https://sintezf.com/shop/catalog/smesi-dlya-morozhenogo-i-kokteyley/700
         https://sintezf.com/shop/catalog/toppingi-i-napitki/57
-        https://sintezf.com/shop/catalog/bonna/796';
+        https://sintezf.com/shop/catalog/bonna/796
+        https://sintezf.com/shop/catalog/banki-dlya-sypuchih-produktov/275
+        https://sintezf.com/shop/catalog/banka-emkost-s-kranom-podstavki/519
+        https://sintezf.com/shop/catalog/banki-dlya-kokteyley/555
+        https://sintezf.com/shop/catalog/banki-dlya-podachi/528
+        https://sintezf.com/shop/catalog/kremanki/525
+        https://sintezf.com/shop/catalog/grafiny-shtofy/522
+        https://sintezf.com/shop/catalog/butylki/277
+        https://sintezf.com/shop/catalog/kruzhki-dlya-piva/128
+        https://sintezf.com/shop/catalog/bokaly-dlya-piva/527
+        https://sintezf.com/shop/catalog/kruzhki/523
+        https://sintezf.com/shop/catalog/kuvshiny/132
+        https://sintezf.com/shop/catalog/stakany-haybol-vysokie/518
+        https://sintezf.com/shop/catalog/nabory-dlya-speciy-melnicy-dlya-perca-soli-salfetnicy/161
+        https://sintezf.com/shop/catalog/sousniki-kokotnicy-molochniki/402
+        https://sintezf.com/shop/catalog/vedra-korzinki-podstavki-etazherki-dlya-podachi/398
+        https://sintezf.com/shop/catalog/french-pressy-chayniki-zavarochnye/403
+        https://sintezf.com/shop/catalog/posuda-dlya-keyteringa-i-furshetov/189
+        https://sintezf.com/shop/catalog/konteynery-pakety-bumaga-dlya-podachi/399
+        https://sintezf.com/shop/catalog/blyuda-dlya-podachi-slanec-baranchiki-kryshki-dlya-tarelok-tortovnic-hlebnic/131
+        https://sintezf.com/shop/catalog/doski-razdelochnye-plastikovye-polipropilenovye/105
+        https://sintezf.com/shop/catalog/doski-razdelochnye-dlya-podachi-derevyannye/106';
 
     public function parse(OutputInterface $output): void
     {
