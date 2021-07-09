@@ -46,7 +46,7 @@ class ParseCommand extends Command
              */
             $site = $this->app->getContainer()->get('App\Service\Site\\' . ucfirst($siteName));
 
-            $parserConfig = $this->app->getContainer()->getParameter('parser')['sitesConfig'][$siteName] ?? [];
+            $parserConfig = $this->app->getContainer()->getParameter('parser')['sitesConfig'][mb_strtolower($siteName)] ?? [];
 
             foreach ($parserConfig as $name => $value) {
                 $site->getParser()->{$name} = $value;

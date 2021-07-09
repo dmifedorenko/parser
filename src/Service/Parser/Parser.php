@@ -25,6 +25,8 @@ class Parser
 
     public string $rootUrl = '';
 
+    public bool $verbose = false;
+
     private string $name;
 
     public int $cacheTTLDays = 1;
@@ -202,7 +204,9 @@ class Parser
 
         if (!file_exists($file) || ($this->cacheTTLDays && (time() - filemtime($file)) / 60 / 60 / 24 > $this->cacheTTLDays)) {
             try {
-                //$this->output->writeln('Downloading ' . $url);
+                if ($this->verbose) {
+                    $this->output->writeln('Downloading ' . $url);
+                }
                 file_put_contents($file, file_get_contents($url, false, $context ? stream_context_create($context) : null), LOCK_EX);
                 if ($this->sleepOnLoad) {
                     usleep($this->sleepOnLoad);

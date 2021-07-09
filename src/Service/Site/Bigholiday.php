@@ -111,7 +111,13 @@ class Bigholiday extends SiteParser
                 $images[] = $item['@']['href'];
             }
 
-            $collectionName = $this->parser->css('ul.breadcrumb li span', true)[1]['_'];
+            try {
+                $collectionName = $this->parser->css('ul.breadcrumb li span', true)[1]['_'];
+            } catch (\Throwable $e) {
+                echo $goodUrl . PHP_EOL;
+                echo $e;
+                continue;
+            }
 
             $count = $this->parser->css('input#stock_quantity')['@']['value'] ?? 0;
             if (!$count) {
@@ -122,7 +128,7 @@ class Bigholiday extends SiteParser
             $minimumval = $this->parser->css('input#minimumval')['@']['value'];
 
             if ($minimumval != 1) {
-                $this->writeln("Skipt minimum {$minimumval} - {$goodUrl}");
+                //$this->writeln("Skipt minimum {$minimumval} - {$goodUrl}");
                 continue;
             }
 

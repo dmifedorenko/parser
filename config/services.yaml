@@ -29,6 +29,7 @@ parameters:
                 rootUrl: 'https://www.ozon.ru'
             bigholiday:
                 cacheTTLDays: 500
+                verbose: true
                 rootUrl: 'http://bigholiday25.ru'
 
 services:
