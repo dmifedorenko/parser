@@ -17,9 +17,10 @@ class ImagesBySource extends SiteParser
 
         $c = 0;
         $ret = [];
-        foreach ($items as $gid => $item) {
+        foreach ($items as $gid => $source) {
             try {
-                $this->parser->getUrl($item);
+                $source = trim($source, '"');
+                $this->parser->getUrl($source);
             } catch (\Throwable $e) {
                 echo $e->getMessage() . PHP_EOL;
                 $ret[$gid] = [];
@@ -48,5 +49,4 @@ class ImagesBySource extends SiteParser
 
         dd($ret);
     }
-
 }

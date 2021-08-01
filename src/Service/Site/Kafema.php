@@ -75,7 +75,7 @@ class Kafema extends SiteParser
                     [, $data] = explode(';', $src);
                     [, $data] = explode(',', $data);
                     $content = base64_decode($data);
-                    $src = $content;//$this->yandexDisk->upload(md5($src), $content);
+                    $src = $content; //$this->yandexDisk->upload(md5($src), $content);
                 }
                 $images[] = $src;
             } catch (\Throwable $e) {

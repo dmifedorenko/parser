@@ -18,8 +18,8 @@ down:
 config_nginx:
 	~/subl /usr/local/etc/nginx/nginx.conf
 
-kafema:
-	php bin/console app:parse kafema
+parse:
+	php bin/console app:parse $(ARG)
 
 phpstan:
 	vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -vvv --allow-risky=yes src
