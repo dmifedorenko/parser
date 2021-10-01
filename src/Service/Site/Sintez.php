@@ -157,7 +157,7 @@ class Sintez extends SiteParser
                 }
 
                 $this->parser->putRowDetails(
-                    trim($breads[count($breads) - 2]['_']),
+                    trim($breads[count($breads) - 2]['span']['_']),
                     $art,
                     $title,
                     $description,
@@ -169,7 +169,7 @@ class Sintez extends SiteParser
                     $images
                 );
             } catch (\Throwable $e) {
-                dd($goodUrl, $e);
+                dump($goodUrl, $e);
                 continue;
             }
         }

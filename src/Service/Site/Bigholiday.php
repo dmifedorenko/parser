@@ -20,6 +20,7 @@ class Bigholiday extends SiteParser
         '/svechi-i-podsvechniki/',
         '/dekorativnye-ukrasheniya/',
         '/iskusstvennye-cvety/',
+        '/novyj-god/',
     ];
 
     public function parse(OutputInterface $output): void
