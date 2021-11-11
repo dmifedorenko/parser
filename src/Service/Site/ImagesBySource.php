@@ -12,7 +12,7 @@ class ImagesBySource extends SiteParser
     {
         parent::parse($output);
 
-        $file = __DIR__ . '/../../../goods_source';
+        $file = realpath(__DIR__ . '/../../../../dev.100sp/goods_source');
         $items = unserialize(file_get_contents($file));
 
         $c = 0;
@@ -32,7 +32,9 @@ class ImagesBySource extends SiteParser
                 $images[] = $image['src'];
             }
 
-            $ret[$gid] = $images;
+            if ($images) {
+                $ret[$gid] = $images;
+            }
 
             ++$c;
             if ($c && $c % 5 == 0) {
@@ -42,10 +44,10 @@ class ImagesBySource extends SiteParser
 //            if ($c > 10) {
 //                break;
 //            }
+
+            file_put_contents($file . '.done', serialize($ret));
         }
         echo PHP_EOL . PHP_EOL;
-
-        file_put_contents($file . '.done', serialize($ret));
 
         dd($ret);
     }

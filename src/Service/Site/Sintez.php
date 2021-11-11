@@ -82,7 +82,42 @@ class Sintez extends SiteParser
         https://sintezf.com/shop/catalog/konteynery-pakety-bumaga-dlya-podachi/399
         https://sintezf.com/shop/catalog/blyuda-dlya-podachi-slanec-baranchiki-kryshki-dlya-tarelok-tortovnic-hlebnic/131
         https://sintezf.com/shop/catalog/doski-razdelochnye-plastikovye-polipropilenovye/105
-        https://sintezf.com/shop/catalog/doski-razdelochnye-dlya-podachi-derevyannye/106';
+        https://sintezf.com/shop/catalog/doski-razdelochnye-dlya-podachi-derevyannye/106
+        https://sintezf.com/shop/catalog/salfetki-skaterti-bumazhnye/42
+        https://sintezf.com/shop/catalog/salfetki-skaterti-pvh/43
+        https://sintezf.com/shop/catalog/fartuki-podtyazhki/60 
+        https://sintezf.com/shop/catalog/kostyum-graciya-zhenskiy/814 
+        https://sintezf.com/shop/catalog/kostyum-lyuks-zhenskiy/815 
+        https://sintezf.com/shop/catalog/kostyum-nastenka-zhenskiy/816 
+        https://sintezf.com/shop/catalog/kostyum-tehnolog-muzhskoy/818 
+        https://sintezf.com/shop/catalog/kostyum-pekarya/819 
+        https://sintezf.com/shop/catalog/perchatki/30 
+        https://sintezf.com/shop/catalog/kitel-povarskoy-rikon-zhenskiy/821 
+        https://sintezf.com/shop/catalog/kitel-povarskoy-rikon-muzhskoy/822 
+        https://sintezf.com/shop/catalog/kurtka-lyuks/823 
+        https://sintezf.com/shop/catalog/kurtka-lyuks-chernaya/834 
+        https://sintezf.com/shop/catalog/kurtka-lyuks-layt-belaya-s-korotkim-rukavom/825 
+        https://sintezf.com/shop/catalog/kurtka-lyuks-layt-chernaya/824 
+        https://sintezf.com/shop/catalog/bandany-kolpaki-shapochki/10 
+        https://sintezf.com/shop/catalog/kipyatilniki-i-vodonagrevateli/118 
+        https://sintezf.com/shop/catalog/plastmassovaya-posuda/32 
+        https://sintezf.com/shop/catalog/tara/53 
+        https://sintezf.com/shop/catalog/termosy-termokonteynenry-termosumki/56 
+        https://sintezf.com/shop/catalog/ocinkovannaya-hromirovannaya-posuda/29 
+        https://sintezf.com/shop/catalog/armonia/837 
+        https://sintezf.com/shop/catalog/infinity/846 
+        https://sintezf.com/shop/catalog/cowry-yellow/843 
+        https://sintezf.com/shop/catalog/elegance/838 
+        https://sintezf.com/shop/catalog/kolezium/845 
+        https://sintezf.com/shop/catalog/legna/839 
+        https://sintezf.com/shop/catalog/supreme/840 
+        https://sintezf.com/shop/catalog/tinta-spazio/844
+        https://sintezf.com/shop/catalog/emalirovannaya-posuda/70 
+        https://sintezf.com/shop/catalog/vintage/841 
+        https://sintezf.com/shop/catalog/farfor-rak-oae/566 
+        https://sintezf.com/shop/catalog/farfor-bonna-turciya/796 
+        https://sintezf.com/shop/catalog/farfor-cvetnoy-knr/590 
+        https://sintezf.com/shop/catalog/posuda-plastikovaya-melamin/190';
 
     public function parse(OutputInterface $output): void
     {
@@ -180,7 +215,7 @@ class Sintez extends SiteParser
         $this->parser->getUrl('/shop/catalog/katalog');
 
         $uniqGoods = [];
-        foreach (explode(PHP_EOL, $this->onlyCategories) as $url) {
+        foreach (array_unique(explode(PHP_EOL, $this->onlyCategories)) as $url) {
             $this->proccessPage($url, $uniqGoods);
         }
 
