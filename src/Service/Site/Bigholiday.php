@@ -11,8 +11,10 @@ class Bigholiday extends SiteParser
     public const STOCK_OK = 'На складе';
     public const STOCK_NOT = 'Заканчивается';
 
+    private const GOOD_ITEM = '#content #res-products .product .product-about';
+
     private array $sections = [
-        '/upakovka/',
+        /*'/upakovka/',
         '/naturalnye-materialy-dlya-dekora-i-floristiki/',
         '/morskie-suveniry/',
         '/predmety-dlya-interera-i-dekora/',
@@ -21,6 +23,18 @@ class Bigholiday extends SiteParser
         '/dekorativnye-ukrasheniya/',
         '/iskusstvennye-cvety/',
         '/novyj-god/',
+        */
+        '/novyj-god/aksessuary-novogodnie/',
+        '/novyj-god/vozdushnye-shary-novyj-god/',
+        '/novyj-god/girlyandy-i-plakaty-novyj-god/',
+        '/novyj-god/elochnye-i-novogodnie-girlyandy/',
+        '/novyj-god/novogodnie-elochnye-igrushki/',
+        '/novyj-god/elochnye-shary/',
+        '/novyj-god/iskusstvennye-elki-novyj-god/',
+        '/novyj-god/kostyumy-i-karnavalnye-aksessuary-novyj-god/',
+        '/novyj-god/magnity-novogodnie/',
+        '/novyj-god/nagrady-i-podarki-novogodnie/',
+        '/novyj-god/novogodnie-venki/',
     ];
 
     public function parse(OutputInterface $output): void
@@ -47,7 +61,7 @@ class Bigholiday extends SiteParser
             foreach (array_unique($pages) as $page) {
                 $this->getParser()->getUrl($page);
 
-                foreach ($this->css('#content #res-products .product .product-about') as $index => $good) {
+                foreach ($this->css(self::GOOD_ITEM) as $index => $good) {
                     $goodNodes = $this->parser->getLastNodeList()[$index];
 
                     $stock = $this->parser->textFromCss('.oct-cat-stock', $goodNodes);
@@ -76,6 +90,10 @@ class Bigholiday extends SiteParser
             $this->parser->getUrl($item);
 
             $links = $this->parser->css('.box-content .active a', true);
+
+            if (!$links && $this->parser->css(self::GOOD_ITEM)) {
+                $sections[] = $item;
+            }
 
             foreach ($links as $link) {
                 if (empty($link['@']['href'])) {

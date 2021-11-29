@@ -79,7 +79,7 @@ class Parser
             }
         }
 
-        return explode(',', 'Коллекция,Артикул,Название,Подробнее,Цена,РРЦ,Размеры,Источник товара,Категория,' . implode(',', $images));
+        return explode(',', 'Коллекция,Артикул,Название,Подробнее,Цена,РРЦ,Размеры,Источник товара,Категория,Место хранения,' . implode(',', $images));
     }
 
     public function addHeader(string $header): void
@@ -104,7 +104,8 @@ class Parser
         string $sizes,
         string $source,
         int $category,
-        array $images = []
+        array $images = [],
+        string $storageLocation = '',
     ): void {
         if (is_string($price)) {
             $price = str_replace([',', ' '], ['.', ''], $price);
@@ -146,6 +147,7 @@ class Parser
             $sizes,
             $source,
             $category,
+            $storageLocation,
         ], $images));
     }
 

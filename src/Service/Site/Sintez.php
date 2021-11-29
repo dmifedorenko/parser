@@ -148,9 +148,17 @@ class Sintez extends SiteParser
                 $items = $this->parser->css('.list-group-item .list-group-item-text');
 
                 $skipGood = false;
+                $sintezArt = '';
                 foreach ($items as $item) {
-                    if (($item['strong'] ?? '') == 'Наличие:') {
-                        if ($item['span'] == 'Под заказ') {
+                    $itemName = trim($item['strong'] ?? '', ' :');
+                    $itemValue = $item['span'];
+
+                    if ($itemName == 'Артикул') {
+                        $sintezArt = $itemValue;
+                    }
+
+                    if ($itemName == 'Наличие') {
+                        if ($itemValue == 'Под заказ') {
                             $skipGood = true;
                         }
                     }
@@ -201,7 +209,8 @@ class Sintez extends SiteParser
                     '@',
                     $this->parser->rootUrl . $goodUrl,
                     0,
-                    $images
+                    $images,
+                    $sintezArt
                 );
             } catch (\Throwable $e) {
                 dump($goodUrl, $e);
