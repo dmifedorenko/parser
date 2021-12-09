@@ -32,7 +32,7 @@ class ParseCommand extends Command
         $this->addArgument('site', InputArgument::REQUIRED, 'The site to parse');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $siteName = $input->getArgument('site');
 

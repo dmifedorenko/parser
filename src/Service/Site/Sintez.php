@@ -158,7 +158,7 @@ class Sintez extends SiteParser
                     }
 
                     if ($itemName == 'Наличие') {
-                        if ($itemValue == 'Под заказ') {
+                        if (in_array($itemValue, ['Под заказ', 'Ожидается'], true)) {
                             $skipGood = true;
                         }
                     }
@@ -213,7 +213,7 @@ class Sintez extends SiteParser
                     $sintezArt
                 );
             } catch (\Throwable $e) {
-                dump($goodUrl, $e);
+                dump('https://sintezf.com' . $goodUrl, $e);
                 continue;
             }
         }
