@@ -116,7 +116,8 @@ class Sintez extends SiteParser
         https://sintezf.com/shop/catalog/vintage/841 
         https://sintezf.com/shop/catalog/farfor-rak-oae/566 
         https://sintezf.com/shop/catalog/farfor-bonna-turciya/796 
-        https://sintezf.com/shop/catalog/farfor-cvetnoy-knr/590 
+        https://sintezf.com/shop/catalog/farfor-cvetnoy-knr/590
+        https://sintezf.com/shop/catalog/stakany-old-feshn-nizkie/517
         https://sintezf.com/shop/catalog/posuda-plastikovaya-melamin/190';
 
     public function parse(OutputInterface $output): void
